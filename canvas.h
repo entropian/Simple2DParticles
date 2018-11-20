@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 
 class Canvas
@@ -6,7 +7,7 @@ public:
     Canvas():width(0), height(0), num_pixels(0), point_size(1){}
     Canvas(const size_t w, const size_t h):width(w), height(h), num_pixels(w * h), point_size(1)
     {
-        image.reserve(num_pixels * 3 * sizeof(unsigned char));
+        image.resize(num_pixels * 3 * sizeof(unsigned char));
         std::vector<unsigned char>::iterator itr;
         for(itr = image.begin(); itr != image.end(); itr++)
         {
@@ -44,11 +45,13 @@ public:
 
     void clear()
     {
+        /*
         std::vector<unsigned char>::iterator itr;
         for(itr = image.begin(); itr != image.end(); itr++)
         {
             *itr = 0;
         }
+        */
         for(int i = 0; i < num_pixels; i++)
         {
             image[i*3] = 0;

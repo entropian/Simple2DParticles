@@ -8,7 +8,7 @@
 
 #include "gl/glcode.h"
 #include "canvas.h"
-#include "particle.h"
+#include "simulation.h"
 
 int main()
 {
@@ -27,16 +27,17 @@ int main()
 
     int width = 720, height = 720;
     Canvas canvas(width, height);
+    Simulation sim(1000);
 
-    Particle p(500.0f/width, 400.0f/width, 0.1f, 0.1f);
+    //Particle p(500.0f/width, 400.0f/width, 0.1f, 0.1f);
 
     double prev_time = glfwGetTime();
     while(1)
     {
         double current_time = glfwGetTime();
         float delta_t = float(current_time - prev_time);
-        p.updatePosition(delta_t);
-        canvas.drawPoint(p.getX(), p.getY(), 1.0f, 1.0f, 1.0f);
+        sim.update(delta_t);
+        sim.draw(canvas);
         displayImage(window, viewport, canvas.getCanvasData(), width, height);
         glfwPollEvents();
         canvas.clear();

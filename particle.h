@@ -1,3 +1,4 @@
+#pragma once
 #include <cassert>
 
 class Particle
@@ -36,16 +37,47 @@ public:
         }        
     }
 
+    void setX(const float x)
+    {
+        this->x = x;
+    }
+    
     float getX() const
     {
         return x;
+    }
+
+    void setY(const float y)
+    {
+        this->y = y;
     }
 
     float getY() const
     {
         return y;
     }
+
+    void setVx(const float vx)
+    {
+        this->vx = vx;
+    }
+    
+    float getVx() const
+    {
+        return vx;
+    }
+
+    void setVy(const float vy)
+    {
+        this->vy = vy;
+    }
+
+    float getVy() const
+    {
+        return vy;
+    }    
 private:
     float x, y;
     float vx, vy;
 };
+
