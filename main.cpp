@@ -18,7 +18,7 @@ int main()
         fprintf(stderr, "Failed to initialize GLFW\n");
     }
     GlViewport viewport;
-    int width = 720, height = 720;    
+    int width = 900, height = 900;    
     GLFWwindow* window = initWindow(width, height);
     if(window)
     {
@@ -27,9 +27,11 @@ int main()
     }
 
     Canvas canvas(width, height);
-    Simulation sim(10);
+    Simulation sim(70000, 0.05, 0.9);
 
+    const double display_time_interval = 1.0;
     double prev_time = glfwGetTime();
+    double last_display_time = prev_time;
     while(1)
     {
         double current_time = glfwGetTime();
@@ -37,6 +39,11 @@ int main()
         sim.update(delta_t);
         sim.draw(canvas);
         displayImage(window, viewport, canvas.getCanvasData(), width, height);
+        if(current_time - last_display_time >= display_time_interval)
+        {
+            std::cout << 1.0f / delta_t << " FPS\n";
+            last_display_time = current_time;
+        }
         glfwPollEvents();
         canvas.clear();
         prev_time = current_time;

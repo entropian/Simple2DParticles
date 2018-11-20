@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cstring>
 
 class Canvas
 {
@@ -39,7 +40,7 @@ public:
             image[index*3 + 2] = (unsigned char)(b * 255.0f);
         }else
         {
-            fprintf(stderr, "Invalid coordiate (%d, %d)\n", x, y);
+            //fprintf(stderr, "Invalid coordiate (%d, %d)\n", x, y);
         }
     }
 
@@ -52,12 +53,15 @@ public:
             *itr = 0;
         }
         */
+
         for(int i = 0; i < num_pixels; i++)
         {
-            image[i*3] = 0;
-            image[i*3+1] = 0;
-            image[i*3+2] = 0;
+            int index = i * 3;
+            image[index] = 0;
+            image[index+1] = 0;
+            image[index+2] = 0;
         }
+
     }
 
     const unsigned char * const getCanvasData() const

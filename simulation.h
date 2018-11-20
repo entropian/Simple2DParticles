@@ -5,37 +5,37 @@
 #include "particle.h"
 #include "canvas.h"
 #include <iostream>
+#include <cmath>
 
 class Simulation
 {
 public:
-    Simulation(const int num_particles)
+    Simulation(const int num_particles, const float orbit_radius, const float damping)
+        :orbit_radius(orbit_radius), damping(damping), time(0)
     {
         particles.resize(num_particles);
         srand(0);
         std::vector<Particle>::iterator itr;
-        int count = 0;
         for(itr = particles.begin(); itr < particles.end(); itr++)
         {
-            std::cout << count << "\n";
-            count++;
             itr->setX(float(rand()) / float(RAND_MAX));
             itr->setY(float(rand()) / float(RAND_MAX));
-            //itr->setVx((float(rand()) / float(RAND_MAX)) - 0.5f);
-            //itr->setVy((float(rand()) / float(RAND_MAX)) - 0.5f);
+            //itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
+            //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
             itr->setVx(0);
             itr->setVy(0);            
         }
-        cog_x = 0.5f;
-        cog_y = 0.5f;
     }
 
     void update(const float delta_t)
     {
+        float cog_x = cos(time) * orbit_radius + 0.5f;
+        float cog_y = sin(time) * orbit_radius + 0.5f;
+        time += delta_t;
         std::vector<Particle>::iterator itr;
         for(itr = particles.begin(); itr < particles.end(); itr++)
         {            
-            itr->updatePosition(delta_t, cog_x, cog_y);
+            itr->updatePosition(delta_t, cog_x, cog_y, damping);
         }
     }
 
@@ -49,5 +49,8 @@ public:
     }
 private:
     std::vector<Particle> particles;
-    float cog_x, cog_y; // Center of gravity
+    float orbit_center;
+    float orbit_radius;
+    float damping;
+    double time;    
 };
