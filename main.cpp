@@ -3,9 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <iostream>
 
 #include "gl/glcode.h"
-
+#include "canvas.h"
+#include "particle.h"
 
 int main()
 {
@@ -15,29 +18,29 @@ int main()
         fprintf(stderr, "Failed to initialize GLFW\n");
     }
     GlViewport viewport;
-    GLFWwindow* window = initWindow(1280, 720);
+    GLFWwindow* window = initWindow(720, 720);
     if(window)
     {
         initViewport(&viewport);
         //glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
 
-    //float* color_buffer = NULL;
-    int width = 1280, height = 720;
+    int width = 720, height = 720;
+    Canvas canvas(width, height);
 
-    int num_pixels = width * height;
-    unsigned char* image = (unsigned char*)malloc(num_pixels * 3 * sizeof(unsigned char));
-    for(int i = 0; i < num_pixels; i+=3)
-    {
-        image[i*3] = 255;
-        image[i*3+1] = 0;
-        image[i*3+2] = 0;
-    }
+    Particle p(500.0f/width, 400.0f/width, 0.1f, 0.1f);
 
+    double prev_time = glfwGetTime();
     while(1)
     {
-        displayImage(window, viewport, image, width, height);
+        double current_time = glfwGetTime();
+        float delta_t = float(current_time - prev_time);
+        p.updatePosition(delta_t);
+        canvas.drawPoint(p.getX(), p.getY(), 1.0f, 1.0f, 1.0f);
+        displayImage(window, viewport, canvas.getCanvasData(), width, height);
         glfwPollEvents();
+        canvas.clear();
+        prev_time = current_time;
     }
     
     return 0;
