@@ -18,18 +18,16 @@ int main()
         fprintf(stderr, "Failed to initialize GLFW\n");
     }
     GlViewport viewport;
-    GLFWwindow* window = initWindow(720, 720);
+    int width = 720, height = 720;    
+    GLFWwindow* window = initWindow(width, height);
     if(window)
     {
         initViewport(&viewport);
         //glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
 
-    int width = 720, height = 720;
     Canvas canvas(width, height);
-    Simulation sim(1000);
-
-    //Particle p(500.0f/width, 400.0f/width, 0.1f, 0.1f);
+    Simulation sim(10);
 
     double prev_time = glfwGetTime();
     while(1)
