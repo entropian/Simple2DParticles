@@ -3,6 +3,7 @@
 #include <cmath>
 
 const float G = 0.6f;
+const float modifier = 0.01;
 
 class Particle
 {
@@ -26,14 +27,14 @@ public:
         {
             dist_to_cog_squared = 0.001f;
         }
-        float dist_to_cog = sqrtf(dist_to_cog_squared);
+        dist_to_cog = sqrtf(dist_to_cog_squared);
         // f = G*m1*m2 / r*r
         // Assume m1 == m2 == 1?
         float f = G / dist_to_cog_squared;
         float f_dir_x = cog_dist_x / dist_to_cog;
         float f_dir_y = cog_dist_y / dist_to_cog;
-        float f_x = f * f_dir_x * delta_t * .01;
-        float f_y = f * f_dir_y * delta_t * .01;
+        float f_x = f * f_dir_x * delta_t * modifier;
+        float f_y = f * f_dir_y * delta_t * modifier;
         vx += f_x; // Iffy notation
         vy += f_y;
 
@@ -58,7 +59,7 @@ public:
         {
             y = -y + 0.0001f;
             vy = -vy;
-        }        
+        }
     }
 
     void setX(const float x)
@@ -99,9 +100,15 @@ public:
     float getVy() const
     {
         return vy;
-    }    
+    }
+
+    float getDistToCOG() const
+    {
+        return dist_to_cog;
+    }
 private:
     float x, y;
     float vx, vy;
+    float dist_to_cog;
 };
 

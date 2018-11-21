@@ -1,11 +1,23 @@
 #pragma once
-//#include <random>
 #include <stdlib.h>
 #include <vector>
 #include "particle.h"
 #include "canvas.h"
 #include <iostream>
 #include <cmath>
+
+float clamp(const float a, const float b, const float c)
+{
+    if(a < b)
+    {
+        return b;
+    }
+    if(a > c)
+    {
+        return c;
+    }
+    return a;
+}
 
 class Simulation
 {
@@ -44,8 +56,12 @@ public:
         std::vector<Particle>::iterator itr;
         for(itr = particles.begin(); itr < particles.end(); itr++)
         {
-            canvas.drawPoint(itr->getX(), itr->getY(), 1.0f, 1.0f, 1.0f);
-        }        
+            
+            canvas.drawPoint(itr->getX(), itr->getY(),
+                             clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f),
+                             0.5f,
+                             clamp(1.0 - 0.1 / itr->getDistToCOG(), 0.0f, 1.0f));
+        }
     }
 private:
     std::vector<Particle> particles;

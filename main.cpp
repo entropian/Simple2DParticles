@@ -18,7 +18,7 @@ int main()
         fprintf(stderr, "Failed to initialize GLFW\n");
     }
     GlViewport viewport;
-    int width = 900, height = 900;    
+    int width = 1080, height = 1080;    
     GLFWwindow* window = initWindow(width, height);
     if(window)
     {
@@ -27,7 +27,7 @@ int main()
     }
 
     Canvas canvas(width, height);
-    Simulation sim(70000, 0.05, 0.9);
+    Simulation sim(150000, 0.05, 0.80);
 
     const double display_time_interval = 1.0;
     double prev_time = glfwGetTime();

@@ -31,13 +31,23 @@ public:
     {
         int x = x_norm * width;
         int y = y_norm * height;
+
         if((x >= 0 && x < width) &&
-           (y >= 0 && y < height))
+           (y > 0 && y <= height))
         {
             unsigned int index = (height - y) * width + x;
-            image[index*3] = (unsigned char)(r * 255.0f);
-            image[index*3 + 1] = (unsigned char)(g * 255.0f);
-            image[index*3 + 2] = (unsigned char)(b * 255.0f);
+            unsigned char value;
+            value = image[index*3] + (unsigned char)(r * 255.0f);
+            image[index*3] = image[index*3] > value ? 255 : value;
+            value = image[index*3+1] + (unsigned char)(g * 255.0f);
+            image[index*3+1] = image[index*3+1] > value ? 255 : value;
+            value = image[index*3+2] + (unsigned char)(b * 255.0f);
+            image[index*3+2] = image[index*3+2] > value ? 255 : value;            
+            //image[index*3] += (unsigned char)(r * 255.0f);
+            //image[index*3 + 1] += (unsigned char)(g * 255.0f);
+            //image[index*3 + 2] += (unsigned char)(b * 255.0f);
+
+
         }else
         {
             //fprintf(stderr, "Invalid coordiate (%d, %d)\n", x, y);
@@ -46,22 +56,8 @@ public:
 
     void clear()
     {
-        /*
-        std::vector<unsigned char>::iterator itr;
-        for(itr = image.begin(); itr != image.end(); itr++)
-        {
-            *itr = 0;
-        }
-        */
-
-        for(int i = 0; i < num_pixels; i++)
-        {
-            int index = i * 3;
-            image[index] = 0;
-            image[index+1] = 0;
-            image[index+2] = 0;
-        }
-
+        // NOTE: In speed: memset > for loop with an index > iterator
+        memset(&(image[0]), 0, num_pixels * 3 * sizeof(unsigned char));
     }
 
     const unsigned char * const getCanvasData() const
