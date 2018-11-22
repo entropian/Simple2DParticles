@@ -22,8 +22,9 @@ float clamp(const float a, const float b, const float c)
 class Simulation
 {
 public:
-    Simulation(const int num_particles, const float orbit_radius, const float damping)
-        :orbit_radius(orbit_radius), damping(damping), time(0)
+    Simulation(const int num_particles, const float orbit_radius, const float damping,
+        const float brightness_modifier)
+        :orbit_radius(orbit_radius), damping(damping), time(0), brightness_modifier(brightness_modifier)
     {
         particles.resize(num_particles);
         srand(0);
@@ -58,9 +59,10 @@ public:
         {
             
             canvas.drawPoint(itr->getX(), itr->getY(),
-                             clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f),
-                             0.5f,
-                             clamp(1.0 - 0.1 / itr->getDistToCOG(), 0.0f, 1.0f));
+                             //clamp(0.1 / itr->getDistToCOG() * brightness_modifier, 0.0f, 0.8f),
+                             clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
+                             0.5f * brightness_modifier,
+                             clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
         }
     }
 private:
@@ -68,5 +70,6 @@ private:
     float orbit_center;
     float orbit_radius;
     float damping;
-    double time;    
+    double time;
+    float brightness_modifier;
 };

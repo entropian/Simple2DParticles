@@ -5,10 +5,13 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "gl/glcode.h"
 #include "canvas.h"
 #include "simulation.h"
+
+const float standard_ratio = 70000.0f / (1080.0f * 1080.0f);
 
 int main()
 {
@@ -25,9 +28,14 @@ int main()
         initViewport(&viewport);
         //glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
-
+    
     Canvas canvas(width, height);
-    Simulation sim(150000, 0.05, 0.80);
+    const int num_particles = 100000;
+    const int num_pixels = width * height;
+    const float particle_pixel_ratio = float(num_particles) / float(num_pixels);
+    float brightness_modifier = logf(standard_ratio / particle_pixel_ratio + 2.f);
+    
+    Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
 
     const double display_time_interval = 1.0;
     double prev_time = glfwGetTime();
@@ -47,7 +55,6 @@ int main()
         glfwPollEvents();
         canvas.clear();
         prev_time = current_time;
-    }
-    
+    }    
     return 0;
 }

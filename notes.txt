@@ -1,2 +1,3 @@
 TODO:
-Take aspect ratio into account 
+Take aspect ratio into account
+Adjust brightness according to the number of particles. 
