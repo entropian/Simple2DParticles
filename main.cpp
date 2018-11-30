@@ -1,8 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -13,9 +13,17 @@
 #include "canvas.h"
 #include "simulation.h"
 
-const float standard_ratio = 70000.0f / (1080.0f * 1080.0f);
 
-int main()
+
+float calcBrightnessModifier(const int num_particles, const int width, const int height)
+{
+	const float standard_ratio = 70000.0f / (1080.0f * 1080.0f);
+	const int num_pixels = width * height;
+	const float particle_pixel_ratio = float(num_particles) / float(num_pixels);
+	return logf(standard_ratio / particle_pixel_ratio + 2.f);
+}
+
+int main(int argc, char* argv[])
 {
     // Init GLFW
     if(glfwInit() != GL_TRUE)
@@ -30,15 +38,22 @@ int main()
         initViewport(&viewport);
         //glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
+
+	int num_particles;
+	if (argc > 1)
+	{
+		num_particles = atoi(argv[1]);
+	}
+	else
+	{
+		num_particles = 100000;
+	}
     
     Canvas canvas(width, height);
-    const int num_particles = 500000;
-    const int num_pixels = width * height;
-    const float particle_pixel_ratio = float(num_particles) / float(num_pixels);
-    float brightness_modifier = logf(standard_ratio / particle_pixel_ratio + 2.f);
+
+	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
     
     Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
-
 	sim.run(canvas, window, &viewport);
     return 0;
 }

@@ -81,7 +81,6 @@ void Simulation::draw(Canvas& canvas)
     {
             
         canvas.drawPoint(itr->getX(), itr->getY(),
-                         //clamp(0.1 / itr->getDistToCOG() * brightness_modifier, 0.0f, 0.8f),
                          clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
                          0.5f * brightness_modifier,
                          clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
