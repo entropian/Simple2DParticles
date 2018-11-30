@@ -7,7 +7,9 @@
 #include <iostream>
 #include <cmath>
 
+#define GLCODE_IMPLEMENTATION
 #include "gl/glcode.h"
+
 #include "canvas.h"
 #include "simulation.h"
 
@@ -30,7 +32,7 @@ int main()
     }
     
     Canvas canvas(width, height);
-    const int num_particles = 100000;
+    const int num_particles = 500000;
     const int num_pixels = width * height;
     const float particle_pixel_ratio = float(num_particles) / float(num_pixels);
     float brightness_modifier = logf(standard_ratio / particle_pixel_ratio + 2.f);

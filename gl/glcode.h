@@ -1,8 +1,20 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <cstdio>
+
+
+struct GlViewport;
+
+// Compile the shaders and link the program
+void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram);
+
+void initViewport(GlViewport *viewport);
+
+void displayImage(GLFWwindow* window, const GlViewport viewport,
+	const unsigned char* image, int width, int height);
+
+#ifdef GLCODE_IMPLEMENTATION
 #include "glshaders.h"
 
 struct GlViewport
@@ -149,3 +161,5 @@ void displayImage(GLFWwindow* window, const GlViewport viewport,
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwSwapBuffers(window);
 }
+
+#endif

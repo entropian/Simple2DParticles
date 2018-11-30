@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include <stdlib.h>
+#include "gl/glcode.h"
 
 static float clamp(const float a, const float b, const float c)
 {
