@@ -11,7 +11,7 @@ void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram
 
 void initViewport(GlViewport *viewport);
 
-void displayImage(GLFWwindow* window, const GlViewport viewport,
+void displayImage(GLFWwindow* window, const GlViewport* viewport,
 	const unsigned char* image, int width, int height);
 
 #ifdef GLCODE_IMPLEMENTATION
@@ -150,7 +150,7 @@ GLFWwindow* initWindow(unsigned int width, unsigned int height)
     return window;
 }
 
-void displayImage(GLFWwindow* window, const GlViewport viewport,
+void displayImage(GLFWwindow* window, const GlViewport* viewport,
                   const unsigned char* image, int width, int height)
 {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);    

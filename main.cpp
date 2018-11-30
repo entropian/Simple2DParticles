@@ -39,24 +39,6 @@ int main()
     
     Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
 
-    const double display_time_interval = 1.0;
-    double prev_time = glfwGetTime();
-    double last_display_time = prev_time;
-    while(1)
-    {
-        double current_time = glfwGetTime();
-        float delta_t = float(current_time - prev_time);
-        sim.update(delta_t);
-        sim.draw(canvas);
-        displayImage(window, viewport, canvas.getCanvasData(), width, height);
-        if(current_time - last_display_time >= display_time_interval)
-        {
-            std::cout << 1.0f / delta_t << " FPS\n";
-            last_display_time = current_time;
-        }
-        glfwPollEvents();
-        canvas.clear();
-        prev_time = current_time;
-    }    
+	sim.run(canvas, window, &viewport);
     return 0;
 }

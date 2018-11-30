@@ -56,3 +56,13 @@ const unsigned char * const Canvas::getCanvasData() const
 {
     return &(image[0]);
 }                    
+
+size_t Canvas::getWidth() const
+{
+	return width;
+}
+
+size_t Canvas::getHeight() const
+{
+	return height;
+}

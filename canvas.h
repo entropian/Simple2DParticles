@@ -20,6 +20,9 @@ public:
     void clear();
 
     const unsigned char * const getCanvasData() const;
+
+	size_t getWidth() const;
+	size_t getHeight() const;
 private:
     size_t width, height, num_pixels;
     unsigned int point_size;

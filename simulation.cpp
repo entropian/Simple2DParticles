@@ -1,8 +1,9 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include "simulation.h"
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include "gl/glcode.h"
 
 static float clamp(const float a, const float b, const float c)
 {
@@ -33,6 +34,32 @@ Simulation::Simulation(const int num_particles, const float orbit_radius, const 
         itr->setVx(0);
         itr->setVy(0);            
     }
+}
+
+static const double display_time_interval = 1.0;
+
+void Simulation::run(Canvas& canvas, GLFWwindow* window, const GlViewport* viewport)
+{
+	const double display_time_interval = 1.0;
+	double prev_time = glfwGetTime();
+	double last_display_time = prev_time;
+	bool running = true;
+	while (running)
+	{
+		double current_time = glfwGetTime();
+		float delta_t = float(current_time - prev_time);
+		update(delta_t);
+		draw(canvas);
+		displayImage(window, viewport, canvas.getCanvasData(), canvas.getWidth(), canvas.getHeight());
+		if (current_time - last_display_time >= display_time_interval)
+		{
+			std::cout << 1.0f / delta_t << " FPS\n";
+			last_display_time = current_time;
+		}
+		glfwPollEvents();
+		canvas.clear();
+		prev_time = current_time;
+	}
 }
 
 void Simulation::update(const float delta_t)

@@ -2,6 +2,7 @@
 #include <vector>
 #include "particle.h"
 #include "canvas.h"
+#include "gl/glcode.h"
 
 
 class Simulation
@@ -9,6 +10,8 @@ class Simulation
 public:
     Simulation(const int num_particles, const float orbit_radius, const float damping,
                const float brightness_modifier);
+
+	void run(Canvas& canvas, GLFWwindow* window, const GlViewport* Viewport);
 
     void update(const float delta_t);
 
