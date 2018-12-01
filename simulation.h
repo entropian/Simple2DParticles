@@ -3,8 +3,7 @@
 #include "particle.h"
 #include "canvas.h"
 
-struct GLFWwindow;
-struct GlViewport;
+class Viewport;
 
 class Simulation
 {
@@ -12,7 +11,7 @@ public:
     Simulation(const int num_particles, const float orbit_radius, const float damping,
                const float brightness_modifier);
 
-	void run(Canvas& canvas, GLFWwindow* window, const GlViewport* Viewport);
+	void run(Canvas& canvas, Viewport* viewport);
 
     void update(const float delta_t);
 

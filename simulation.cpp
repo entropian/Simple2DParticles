@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#define GLCODE_IMPLEMENTATION
 #include "gl/glcode.h"
 
 static float clamp(const float a, const float b, const float c)
@@ -40,7 +39,8 @@ Simulation::Simulation(const int num_particles, const float orbit_radius, const 
 
 static const double display_time_interval = 1.0;
 
-void Simulation::run(Canvas& canvas, GLFWwindow* window, const GlViewport* viewport)
+void Simulation::run(Canvas& canvas, Viewport* viewport)
+
 {
 	const double display_time_interval = 1.0;
 	double prev_time = glfwGetTime();
@@ -52,7 +52,7 @@ void Simulation::run(Canvas& canvas, GLFWwindow* window, const GlViewport* viewp
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);
 		draw(canvas);
-		displayImage(window, viewport, canvas.getCanvasData(), canvas.getWidth(), canvas.getHeight());
+		viewport->displayImage(canvas.getCanvasData(), canvas.getWidth(), canvas.getHeight());
 		if (current_time - last_display_time >= display_time_interval)
 		{
 			std::cout << 1.0f / delta_t << " FPS\n";
