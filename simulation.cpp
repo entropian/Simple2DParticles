@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include "gl/glcode.h"
+#include "canvas.h"
 
 static float clamp(const float a, const float b, const float c)
 {
@@ -39,7 +40,7 @@ Simulation::Simulation(const int num_particles, const float orbit_radius, const 
 
 static const double display_time_interval = 1.0;
 
-void Simulation::run(Canvas& canvas, Viewport* viewport)
+void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 {
 	const double display_time_interval = 1.0;
@@ -52,14 +53,14 @@ void Simulation::run(Canvas& canvas, Viewport* viewport)
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);
 		draw(canvas);
-		viewport->displayImage(canvas.getCanvasData(), canvas.getWidth(), canvas.getHeight());
+		viewport->displayImage(canvas->getCanvasData(), canvas->getWidth(), canvas->getHeight());
 		if (current_time - last_display_time >= display_time_interval)
 		{
 			std::cout << 1.0f / delta_t << " FPS\n";
 			last_display_time = current_time;
 		}
 		glfwPollEvents();
-		canvas.clear();
+		canvas->clear();
 		prev_time = current_time;
 	}
 }
@@ -76,13 +77,13 @@ void Simulation::update(const float delta_t)
     }
 }
 
-void Simulation::draw(Canvas& canvas)
+void Simulation::draw(Canvas* canvas)
 {
     std::vector<Particle>::iterator itr;
     for(itr = particles.begin(); itr < particles.end(); itr++)
     {
             
-        canvas.drawPoint(itr->getX(), itr->getY(),
+        canvas->drawPoint(itr->getX(), itr->getY(),
                          clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
                          0.5f * brightness_modifier,
                          clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);

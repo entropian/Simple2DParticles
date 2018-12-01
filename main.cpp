@@ -37,6 +37,6 @@ int main(int argc, char* argv[])
 	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
     
     Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
-	sim.run(canvas, &viewport);
+	sim.run(&canvas, &viewport);
     return 0;
 }
