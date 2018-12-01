@@ -21,21 +21,21 @@ static float clamp(const float a, const float b, const float c)
 }
 
 Simulation::Simulation(const int num_particles, const float orbit_radius, const float damping,
-	const float brightness_modifier)
-	:orbit_radius(orbit_radius), damping(damping), time(0), brightness_modifier(brightness_modifier)
+           const float brightness_modifier)
+    :orbit_radius(orbit_radius), damping(damping), time(0), brightness_modifier(brightness_modifier)
 {
-	particles.resize(num_particles);
-	srand(0);
-	std::vector<Particle>::iterator itr;
-	for (itr = particles.begin(); itr < particles.end(); itr++)
-	{
-		itr->setX(float(rand()) / float(RAND_MAX));
-		itr->setY(float(rand()) / float(RAND_MAX));
-		//itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
-		//itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
-		itr->setVx(0);
-		itr->setVy(0);
-	}
+    particles.resize(num_particles);
+    srand(0);
+    std::vector<Particle>::iterator itr;
+    for(itr = particles.begin(); itr < particles.end(); itr++)
+    {
+        itr->setX(float(rand()) / float(RAND_MAX));
+        itr->setY(float(rand()) / float(RAND_MAX));
+        //itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
+        //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
+        itr->setVx(0);
+        itr->setVy(0);            
+    }
 }
 
 static const double display_time_interval = 1.0;

@@ -59,7 +59,6 @@ void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram
 	glDeleteShader(fragmentShader);
 }
 
-//void initViewport(GlViewport *viewport)
 GlViewport* initViewport()
 {
 	GlViewport* viewport = new GlViewport;
@@ -145,6 +144,107 @@ void displayImage(GLFWwindow* window, const GlViewport* viewport,
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glfwSwapBuffers(window);
+}
+
+Viewport::Viewport(const size_t width, const size_t height)
+{
+	// Init GLFW
+	if (glfwInit() != GL_TRUE)
+	{
+		fprintf(stderr, "Failed to initialize GLFW\n");
+	}
+	viewport = new GlViewport;
+	initWindow(width, height);
+	if (window)
+	{
+		initViewport();
+		//glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	}
+}
+
+void Viewport::initViewport()
+{
+	viewport = new GlViewport;
+	readAndCompileShaders(basicVertSrc, basicFragSrc, &(viewport->shaderProgram));
+	glUseProgram(viewport->shaderProgram);
+
+	GLfloat vertices[] = {
+		-1.0f,  -1.0f, 0.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, -1.0f, 1.0f, 0.0f,
+		1.0, -1.0, 1.0f, 0.0f,
+		-1.0, 1.0, 0.0f, 1.0f,
+		1.0, 1.0, 1.0f, 1.0f
+	};
+
+
+	glGenVertexArrays(1, &(viewport->vao));
+	glBindVertexArray(viewport->vao);
+
+	glGenBuffers(1, &viewport->vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, viewport->vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	GLint posAttrib = glGetAttribLocation(viewport->shaderProgram, "aPosition");
+	glEnableVertexAttribArray(posAttrib);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+
+	GLint texAttrib = glGetAttribLocation(viewport->shaderProgram, "aTexcoord");
+	glEnableVertexAttribArray(texAttrib);
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+
+
+	//------------------- Texture
+	glGenTextures(1, &(viewport->textureHandle));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, viewport->textureHandle);
+
+	// NOTE: implement antialiasing and filtering?
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	GLuint textureUniform = glGetUniformLocation(viewport->shaderProgram, "textureMap");
+	glUniform1i(textureUniform, 0);
+}
+void Viewport::initWindow(const size_t width, const size_t height)
+{
+	/*
+	// Init GLFW
+	if(glfwInit() != GL_TRUE)
+	{
+		fprintf(stderr, "Failed to initialize GLFW\n");
+		return NULL;
+		//return -1;
+	}
+	*/
+	// Create a rendering window with OpenGL 3.2 context
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+	window = glfwCreateWindow(width, height, "CRaytracer", NULL, NULL);
+	glfwSetWindowPos(window, 600, 100);
+	glfwMakeContextCurrent(window);
+
+	// Init GLEW
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK)
+	{
+		fprintf(stderr, "Failed to initialize GLEW\n");
+	}
+}
+
+void Viewport::displayImage(const unsigned char* image, int width, int height)
+{
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
