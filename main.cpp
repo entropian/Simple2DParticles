@@ -10,9 +10,6 @@
 #include "simulation.h"
 #include "gl/glcode.h"
 
-//#define GLCODE_IMPLEMENTATION
-
-
 #include "canvas.h"
 
 
@@ -36,12 +33,10 @@ int main(int argc, char* argv[])
     GLFWwindow* window = initWindow(width, height);
     if(window)
     {
-        //initViewport(&viewport);
 		viewport = initViewport();
         //glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
 	Canvas canvas(width, height);
-	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
 
 	int num_particles;
 	if (argc > 1)
@@ -52,6 +47,7 @@ int main(int argc, char* argv[])
 	{
 		num_particles = 100000;
 	}
+	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
     
     Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
 	sim.run(canvas, window, viewport);
