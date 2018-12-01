@@ -2,8 +2,9 @@
 #include <vector>
 #include "particle.h"
 #include "canvas.h"
-#include "gl/glcode.h"
 
+struct GLFWwindow;
+struct GlViewport;
 
 class Simulation
 {

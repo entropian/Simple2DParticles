@@ -9,7 +9,10 @@ struct GlViewport;
 // Compile the shaders and link the program
 void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram);
 
-void initViewport(GlViewport *viewport);
+//void initViewport(GlViewport *viewport);
+GlViewport* initViewport();
+
+GLFWwindow* initWindow(unsigned int width, unsigned int height);
 
 void displayImage(GLFWwindow* window, const GlViewport* viewport,
 	const unsigned char* image, int width, int height);
@@ -73,8 +76,10 @@ void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram
     glDeleteShader(fragmentShader);
 }
 
-void initViewport(GlViewport *viewport)
+//void initViewport(GlViewport *viewport)
+GlViewport* initViewport()
 {
+	GlViewport* viewport = new GlViewport;
     readAndCompileShaders(basicVertSrc, basicFragSrc, &(viewport->shaderProgram));
     glUseProgram(viewport->shaderProgram);
 
@@ -115,6 +120,8 @@ void initViewport(GlViewport *viewport)
 
     GLuint textureUniform = glGetUniformLocation(viewport->shaderProgram, "textureMap");
     glUniform1i(textureUniform, 0);    
+
+	return viewport;
 }
 
 GLFWwindow* initWindow(unsigned int width, unsigned int height)
