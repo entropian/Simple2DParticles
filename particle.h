@@ -11,19 +11,15 @@ public:
     void updatePosition(const float delta_t, const float cog_x, const float cog_y, const float damping);
 
     void setX(const float x);
-    
     float getX() const;
 
     void setY(const float y);
-
     float getY() const;
 
     void setVx(const float vx);
-    
     float getVx() const;
 
     void setVy(const float vy);
-
     float getVy() const;
 
     float getDistToCOG() const;

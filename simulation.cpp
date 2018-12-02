@@ -51,6 +51,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	{
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
+		canvas->fade(delta_t);
 		update(delta_t);
 		draw(canvas);
 		viewport->displayImage(canvas->getCanvasData(), canvas->getWidth(), canvas->getHeight());
@@ -60,7 +61,6 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			last_display_time = current_time;
 		}
 		glfwPollEvents();
-		canvas->clear();
 		prev_time = current_time;
 	}
 }
