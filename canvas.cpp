@@ -25,27 +25,48 @@ unsigned int Canvas::getPointSize() const
     return point_size;
 }
 
-void Canvas::drawPoint(const float x_norm, const float y_norm,
+void Canvas::drawParticle(const float x_norm, const float y_norm,
                const float r, const float g, const float b)
 {
     int x = x_norm * width;
     int y = y_norm * height;
+	drawPoint(x, y, r, g, b);
+	
+	if (point_size == 0)
+	{
+		drawPoint(x, y, r, g, b);
+	}
+	else if (point_size == 1)
+	{
+		drawPoint(x - 1, y - 1, r, g, b);
+		drawPoint(x - 0, y - 1, r, g, b);
+		drawPoint(x + 1, y - 1, r, g, b);
 
-    if((x >= 0 && x < width) &&
-       (y > 0 && y <= height))
-    {
-        unsigned int index = (height - y) * width + x;
-        unsigned char value;
-        value = image[index*3] + (unsigned char)(r * 255.0f);
-        image[index*3] = image[index*3] > value ? 255 : value;
-        value = image[index*3+1] + (unsigned char)(g * 255.0f);
-        image[index*3+1] = image[index*3+1] > value ? 255 : value;
-        value = image[index*3+2] + (unsigned char)(b * 255.0f);
-        image[index*3+2] = image[index*3+2] > value ? 255 : value;            
-    }else
-    {
-        //fprintf(stderr, "Invalid coordiate (%d, %d)\n", x, y);
-    }
+		drawPoint(x - 1, y - 0, r, g, b);
+		drawPoint(x - 0, y - 0, r, g, b);
+		drawPoint(x + 1, y - 0, r, g, b);
+
+		drawPoint(x - 1, y + 1, r, g, b);
+		drawPoint(x - 0, y + 1, r, g, b);
+		drawPoint(x + 1, y + 1, r, g, b);
+	}
+	
+}
+
+void Canvas::drawPoint(const int x, const int y, const float r, const float g, const float b)
+{
+	if ((x >= 0 && x < width) &&
+		(y > 0 && y <= height))
+	{
+		unsigned int index = (height - y) * width + x;
+		unsigned char value;
+		value = image[index * 3] + (unsigned char)(r * 255.0f);
+		image[index * 3] = image[index * 3] > value ? 255 : value;
+		value = image[index * 3 + 1] + (unsigned char)(g * 255.0f);
+		image[index * 3 + 1] = image[index * 3 + 1] > value ? 255 : value;
+		value = image[index * 3 + 2] + (unsigned char)(b * 255.0f);
+		image[index * 3 + 2] = image[index * 3 + 2] > value ? 255 : value;
+	}
 }
 
 void Canvas::clear()
