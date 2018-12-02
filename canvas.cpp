@@ -1,4 +1,5 @@
 #include <cstring>
+#include <algorithm>
 #include "canvas.h"
 
 Canvas::Canvas():width(0), height(0), num_pixels(0), point_size(1){}
@@ -70,19 +71,7 @@ void Canvas::fade(const float delta_t)
 		b = image[i * 3 + 2];
 		if (r == g && g == b && b == 0)
 			continue;
-		float max_comp;
-		if (r > g && r > b)
-		{
-			max_comp = float(r);
-		}
-		else if (g > b)
-		{
-			max_comp = float(g);
-		}
-		else
-		{
-			max_comp = float(b);
-		}
+		float max_comp = std::max(r, std::max(g, b));
 		for (int j = 0; j < 3; j++)
 		{
 			float val = float(image[i * 3 + j]);
