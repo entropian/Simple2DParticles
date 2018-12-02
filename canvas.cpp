@@ -4,8 +4,8 @@
 
 Canvas::Canvas():width(0), height(0), num_pixels(0), point_size(1){}
 
-Canvas::Canvas(const size_t w, const size_t h, const float fade_time):
-	width(w), height(h), num_pixels(w * h), point_size(1), fade_time(fade_time)
+Canvas::Canvas(const size_t w, const size_t h, const int particle_size, const float fade_time):
+	width(w), height(h), num_pixels(w * h), point_size(particle_size), fade_time(fade_time)
 {
     image.resize(num_pixels * 3 * sizeof(unsigned char));
     std::vector<unsigned char>::iterator itr;
@@ -24,9 +24,9 @@ unsigned int Canvas::getPointSize() const
 {
     return point_size;
 }
-
 void Canvas::drawParticle(const float x_norm, const float y_norm,
-               const float r, const float g, const float b)
+
+	const float r, const float g, const float b)
 {
     int x = x_norm * width;
     int y = y_norm * height;
@@ -38,17 +38,20 @@ void Canvas::drawParticle(const float x_norm, const float y_norm,
 	}
 	else if (point_size == 1)
 	{
-		drawPoint(x - 1, y - 1, r, g, b);
-		drawPoint(x - 0, y - 1, r, g, b);
-		drawPoint(x + 1, y - 1, r, g, b);
+		float outer = 0.5f;
+		float inner = 0.8f;
 
-		drawPoint(x - 1, y - 0, r, g, b);
+		drawPoint(x - 1, y - 1, r*outer, g*outer, b*outer);
+		drawPoint(x - 0, y - 1, r*inner, g*inner, b*inner);
+		drawPoint(x + 1, y - 1, r*outer, g*outer, b*outer);
+
+		drawPoint(x - 1, y - 0, r*inner, g*inner, b*inner);
 		drawPoint(x - 0, y - 0, r, g, b);
-		drawPoint(x + 1, y - 0, r, g, b);
+		drawPoint(x + 1, y - 0, r*inner, g*inner, b*inner);
 
-		drawPoint(x - 1, y + 1, r, g, b);
-		drawPoint(x - 0, y + 1, r, g, b);
-		drawPoint(x + 1, y + 1, r, g, b);
+		drawPoint(x - 1, y + 1, r*outer, g*outer, b*outer);
+		drawPoint(x - 0, y + 1, r*inner, g*inner, b*inner);
+		drawPoint(x + 1, y + 1, r*outer, g*outer, b*outer);
 	}
 	
 }

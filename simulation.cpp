@@ -6,19 +6,8 @@
 #include <iostream>
 #include "gl/glcode.h"
 #include "canvas.h"
+#include "util.h"
 
-static float clamp(const float a, const float b, const float c)
-{
-    if(a < b)
-    {
-        return b;
-    }
-    if(a > c)
-    {
-        return c;
-    }
-    return a;
-}
 
 Simulation::Simulation(const int num_particles, const float orbit_radius, const float damping,
            const float brightness_modifier)

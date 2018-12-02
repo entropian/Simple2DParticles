@@ -7,7 +7,7 @@ class Canvas
 public:
     Canvas();
     
-    Canvas(const size_t w, const size_t h, const float fade_time = 0.0f);
+    Canvas(const size_t w, const size_t h, const int particle_size = 0, const float fade_time = 0.0f);
     void setPointSize(const unsigned int ps);
     unsigned int getPointSize() const;
     void drawParticle(const float x_norm, const float y_norm,
