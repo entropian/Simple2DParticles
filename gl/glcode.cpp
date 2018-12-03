@@ -61,7 +61,7 @@ void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram
 }
 
 
-Viewport::Viewport(const size_t width, const size_t height)
+Viewport::Viewport(const int width, const int height)
 {
 	// Init GLFW
 	if (glfwInit() != GL_TRUE)
@@ -121,7 +121,7 @@ void Viewport::initViewport()
 	GLuint textureUniform = glGetUniformLocation(viewport->shaderProgram, "textureMap");
 	glUniform1i(textureUniform, 0);
 }
-void Viewport::initWindow(const size_t width, const size_t height)
+void Viewport::initWindow(const int width, const int height)
 {
 	/*
 	// Init GLFW

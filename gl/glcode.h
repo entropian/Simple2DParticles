@@ -6,9 +6,9 @@ struct GLFWwindow;
 class Viewport
 {
 public:
-	Viewport(const size_t width, const size_t height);
+	Viewport(const int width, const int height);
 	void initViewport();
-	void initWindow(const size_t width, const size_t height);
+	void initWindow(const int width, const int height);
 	void displayImage(const unsigned char* image, const int width, const int height);
 
 private:

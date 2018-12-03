@@ -4,7 +4,7 @@
 
 Canvas::Canvas():width(0), height(0), num_pixels(0), point_size(1){}
 
-Canvas::Canvas(const size_t w, const size_t h, const int particle_size, const float fade_time):
+Canvas::Canvas(const int w, const int h, const int particle_size, const float fade_time):
 	width(w), height(h), num_pixels(w * h), point_size(particle_size), fade_time(fade_time)
 {
     image.resize(num_pixels * 3);
@@ -132,12 +132,12 @@ const unsigned char * const Canvas::getCanvasData() const
 	return &(image[0]);
 }                    
 
-size_t Canvas::getWidth() const
+int Canvas::getWidth() const
 {
 	return width;
 }
 
-size_t Canvas::getHeight() const
+int Canvas::getHeight() const
 {
 	return height;
 }
