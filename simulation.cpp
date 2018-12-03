@@ -40,11 +40,10 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	{
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
-		canvas->fade(delta_t);
-		canvas->clearNewImage();
 		update(delta_t);
+		canvas->prepDrawing(delta_t);
 		draw(canvas);
-		canvas->mergeBuffers();
+		canvas->calcImage();
 		viewport->displayImage(canvas->getCanvasData(), canvas->getWidth(), canvas->getHeight());
 		if (current_time - last_display_time >= display_time_interval)
 		{
