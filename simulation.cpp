@@ -43,7 +43,6 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 		update(delta_t);
 		canvas->prepDrawing(delta_t);
 		draw(canvas);
-		canvas->calcImage();
 		viewport->displayImage(canvas->getCanvasData(), canvas->getWidth(), canvas->getHeight());
 		if (current_time - last_display_time >= display_time_interval)
 		{
@@ -78,4 +77,5 @@ void Simulation::draw(Canvas* canvas)
                          0.5f * brightness_modifier,
                          clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
     }
+	canvas->calcImage();
 }

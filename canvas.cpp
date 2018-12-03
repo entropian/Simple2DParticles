@@ -12,10 +12,13 @@ Canvas::Canvas(const int w, const int h, const int particle_size, const float fa
     {
         *itr = 0;
     }
-	draw_buffer.resize(num_pixels * 3);
-	for (std::vector<unsigned char>::iterator itr = draw_buffer.begin(); itr != draw_buffer.end(); itr++)
+	if (fade_time > 0.0f)
 	{
-		*itr = 0;
+		draw_buffer.resize(num_pixels * 3);
+		for (std::vector<unsigned char>::iterator itr = draw_buffer.begin(); itr != draw_buffer.end(); itr++)
+		{
+			*itr = 0;
+		}
 	}
 }
 
@@ -34,32 +37,39 @@ void Canvas::drawParticle(const float x_norm, const float y_norm,
 {
     int x = x_norm * width;
     int y = y_norm * height;
+
+	std::vector<unsigned char>* buffer;
+	if (fade_time > 0.0f)
+		buffer = &draw_buffer;
+	else
+		buffer = &image;
 	
 	if (point_size == 0)
 	{
-		drawPoint(x, y, r, g, b);
+		drawPoint(buffer, x, y, r, g, b);
 	}
 	else if (point_size == 1)
 	{
 		float outer = 0.5f;
 		float inner = 0.8f;
 
-		drawPoint(x - 1, y - 1, r*outer, g*outer, b*outer);
-		drawPoint(x - 0, y - 1, r*inner, g*inner, b*inner);
-		drawPoint(x + 1, y - 1, r*outer, g*outer, b*outer);
+		drawPoint(buffer, x - 1, y - 1, r*outer, g*outer, b*outer);
+		drawPoint(buffer, x - 0, y - 1, r*inner, g*inner, b*inner);
+		drawPoint(buffer, x + 1, y - 1, r*outer, g*outer, b*outer);
 
-		drawPoint(x - 1, y - 0, r*inner, g*inner, b*inner);
-		drawPoint(x - 0, y - 0, r, g, b);
-		drawPoint(x + 1, y - 0, r*inner, g*inner, b*inner);
+		drawPoint(buffer, x - 1, y - 0, r*inner, g*inner, b*inner);
+		drawPoint(buffer, x - 0, y - 0, r, g, b);
+		drawPoint(buffer, x + 1, y - 0, r*inner, g*inner, b*inner);
 
-		drawPoint(x - 1, y + 1, r*outer, g*outer, b*outer);
-		drawPoint(x - 0, y + 1, r*inner, g*inner, b*inner);
-		drawPoint(x + 1, y + 1, r*outer, g*outer, b*outer);
+		drawPoint(buffer, x - 1, y + 1, r*outer, g*outer, b*outer);
+		drawPoint(buffer, x - 0, y + 1, r*inner, g*inner, b*inner);
+		drawPoint(buffer, x + 1, y + 1, r*outer, g*outer, b*outer);
 	}
 	
 }
 
-void Canvas::drawPoint(const int x, const int y, const float r, const float g, const float b)
+void Canvas::drawPoint(std::vector<unsigned char>* buffer,
+	const int x, const int y, const float r, const float g, const float b)
 {
 	if ((x >= 0 && x < width) &&
 		(y > 0 && y <= height))
@@ -67,20 +77,23 @@ void Canvas::drawPoint(const int x, const int y, const float r, const float g, c
 		unsigned int index = (height - y) * width + x;
 
 		unsigned char value;
-		value = draw_buffer[index * 3] + (unsigned char)(r * 255.0f);
-		draw_buffer[index * 3] = draw_buffer[index * 3] > value ? 255 : value;
-		value = draw_buffer[index * 3 + 1] + (unsigned char)(g * 255.0f);
-		draw_buffer[index * 3 + 1] = draw_buffer[index * 3 + 1] > value ? 255 : value;
-		value = draw_buffer[index * 3 + 2] + (unsigned char)(b * 255.0f);
-		draw_buffer[index * 3 + 2] = draw_buffer[index * 3 + 2] > value ? 255 : value;
+		value = (*buffer)[index * 3] + (unsigned char)(r * 255.0f);
+		(*buffer)[index * 3] = (*buffer)[index * 3] > value ? 255 : value;
+		value = (*buffer)[index * 3 + 1] + (unsigned char)(g * 255.0f);
+		(*buffer)[index * 3 + 1] = (*buffer)[index * 3 + 1] > value ? 255 : value;
+		value = (*buffer)[index * 3 + 2] + (unsigned char)(b * 255.0f);
+		(*buffer)[index * 3 + 2] = (*buffer)[index * 3 + 2] > value ? 255 : value;
 	}
 }
 
 void Canvas::calcImage()
 {
-	for (int i = 0; i < num_pixels * 3; i++)
+	if (fade_time > 0.0f)
 	{
-		image[i] = image[i] > draw_buffer[i] ? image[i] : draw_buffer[i];
+		for (int i = 0; i < num_pixels * 3; i++)
+		{
+			image[i] = image[i] > draw_buffer[i] ? image[i] : draw_buffer[i];
+		}
 	}
 }
 
@@ -144,6 +157,11 @@ int Canvas::getHeight() const
 
 void Canvas::prepDrawing(const float delta_t)
 {
-	fade(delta_t);
-	clearDrawBuffer();
+	if (fade_time > 0)
+	{
+		fade(delta_t);
+		clearDrawBuffer();
+	}
+	else
+		clearImageBuffer();
 }

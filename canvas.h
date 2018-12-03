@@ -19,7 +19,8 @@ public:
 
 private:
 
-	void drawPoint(const int x, const int y, const float r, const float g, const float b);
+	void drawPoint(std::vector<unsigned char>* buffer,
+		const int x, const int y, const float r, const float g, const float b);
 	void fade(const float delta_t);
 	void clearDrawBuffer();
 	void clearImageBuffer();
