@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	}
 	int width = 1080, height = 1080;
 	Viewport viewport(width, height);
-	Canvas canvas(width, height, 1, 0.0f);
+	Canvas canvas(width, height, 1, 0.5f);
 	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
     
     Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);

@@ -7,12 +7,21 @@ Canvas::Canvas():width(0), height(0), num_pixels(0), point_size(1){}
 Canvas::Canvas(const size_t w, const size_t h, const int particle_size, const float fade_time):
 	width(w), height(h), num_pixels(w * h), point_size(particle_size), fade_time(fade_time)
 {
-    image.resize(num_pixels * 3 * sizeof(unsigned char));
-    std::vector<unsigned char>::iterator itr;
-    for(itr = image.begin(); itr != image.end(); itr++)
+    image.resize(num_pixels * 3);
+    for(std::vector<unsigned char>::iterator itr = image.begin(); itr != image.end(); itr++)
     {
         *itr = 0;
     }
+	new_image.resize(num_pixels * 3);
+	for (std::vector<unsigned char>::iterator itr = new_image.begin(); itr != new_image.end(); itr++)
+	{
+		*itr = 0;
+	}
+	drawn.resize(num_pixels);
+	for (std::vector<bool>::iterator itr = drawn.begin(); itr != drawn.end(); itr++)
+	{
+		*itr = false;
+	}
 }
 
 void Canvas::setPointSize(const unsigned int ps)
@@ -30,7 +39,6 @@ void Canvas::drawParticle(const float x_norm, const float y_norm,
 {
     int x = x_norm * width;
     int y = y_norm * height;
-	drawPoint(x, y, r, g, b);
 	
 	if (point_size == 0)
 	{
@@ -62,20 +70,47 @@ void Canvas::drawPoint(const int x, const int y, const float r, const float g, c
 		(y > 0 && y <= height))
 	{
 		unsigned int index = (height - y) * width + x;
+		/*
+		if (drawn[index] == false)
+		{
+			drawn[index] = true;
+			image[index * 3] = 0;
+			image[index * 3 + 1] = 0;
+			image[index * 3 + 2] = 0;
+		}
+		*/
 		unsigned char value;
-		value = image[index * 3] + (unsigned char)(r * 255.0f);
-		image[index * 3] = image[index * 3] > value ? 255 : value;
-		value = image[index * 3 + 1] + (unsigned char)(g * 255.0f);
-		image[index * 3 + 1] = image[index * 3 + 1] > value ? 255 : value;
-		value = image[index * 3 + 2] + (unsigned char)(b * 255.0f);
-		image[index * 3 + 2] = image[index * 3 + 2] > value ? 255 : value;
+		value = new_image[index * 3] + (unsigned char)(r * 255.0f);
+		new_image[index * 3] = new_image[index * 3] > value ? 255 : value;
+		value = new_image[index * 3 + 1] + (unsigned char)(g * 255.0f);
+		new_image[index * 3 + 1] = new_image[index * 3 + 1] > value ? 255 : value;
+		value = new_image[index * 3 + 2] + (unsigned char)(b * 255.0f);
+		new_image[index * 3 + 2] = new_image[index * 3 + 2] > value ? 255 : value;
 	}
+}
+
+void Canvas::mergeBuffers()
+{
+	for (int i = 0; i < num_pixels * 3; i++)
+	{
+		image[i] = image[i] > new_image[i] ? image[i] : new_image[i];
+	}
+}
+
+void Canvas::clearDrawn()
+{
+	memset(&(drawn[0]), 0, num_pixels * sizeof(bool));
 }
 
 void Canvas::clear()
 {
     // NOTE: In speed: memset > for loop with an index > iterator
     memset(&(image[0]), 0, num_pixels * 3 * sizeof(unsigned char));
+}
+
+void Canvas::clearNewImage()
+{
+	memset(&(new_image[0]), 0, num_pixels * 3 * sizeof(unsigned char));
 }
 
 void Canvas::fade(const float delta_t)
@@ -112,7 +147,7 @@ void Canvas::fade(const float delta_t)
 
 const unsigned char * const Canvas::getCanvasData() const
 {
-    return &(image[0]);
+	return &(image[0]);
 }                    
 
 size_t Canvas::getWidth() const

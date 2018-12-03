@@ -17,12 +17,17 @@ public:
     const unsigned char * const getCanvasData() const;
 	size_t getWidth() const;
 	size_t getHeight() const;
-
+	void mergeBuffers();
+	void clearNewImage();
 private:
 	void drawPoint(const int x, const int y, const float r, const float g, const float b);
+	void clearDrawn();
+
 
     size_t width, height, num_pixels;
     unsigned int point_size;
     std::vector<unsigned char> image;
+	std::vector<unsigned char> new_image;
+	std::vector<bool> drawn;
 	float fade_time;
 };
