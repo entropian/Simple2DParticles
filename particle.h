@@ -8,8 +8,6 @@ public:
     Particle();
     Particle(const float x, const float y, const float vx, const float vy);
 
-    void updatePosition(const float delta_t, const float cog_x, const float cog_y, const float damping);
-
 	__forceinline void setX(const float x)
 	{
 		this->x = x;

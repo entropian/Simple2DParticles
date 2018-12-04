@@ -17,6 +17,7 @@ public:
 	float getDamping()const;
 	void setDamping(const float damping);
 
+	// Apply force on particle p over delta_t
 	__forceinline void apply(Particle& p, const float delta_t)
 	{
 		static const float G = 0.6f;

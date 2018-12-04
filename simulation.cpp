@@ -61,7 +61,6 @@ void Simulation::update(const float delta_t)
     
 	for(itr = particles.begin(); itr < particles.end(); itr++)
     {            
-		//itr->updatePosition(delta_t, gravity.getX(), gravity.getY(), gravity.getDamping());
 		gravity.apply(*itr, delta_t);
     }
 }
