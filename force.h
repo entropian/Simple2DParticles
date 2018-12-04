@@ -21,6 +21,8 @@ public:
 	void setX(const float x);
 	float getY() const;
 	void setY(const float y);
+	float getDamping()const;
+	void setDamping(const float damping);
 private:
 	float x, y;		// Center of gravity
 	float orbit_center_x, orbit_center_y;

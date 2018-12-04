@@ -21,9 +21,5 @@ private:
     std::vector<Particle> particles;
 
 	Gravity gravity;
-    float orbit_center;
-    float orbit_radius;
-    float damping;
-    double time;
     float brightness_modifier;
 };

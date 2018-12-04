@@ -99,3 +99,13 @@ void Gravity::setY(const float y)
 {
 	this->y = y;
 }
+
+float Gravity::getDamping() const
+{
+	return damping;
+}
+
+void Gravity::setDamping(const float d)
+{
+	damping = d;
+}

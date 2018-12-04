@@ -11,8 +11,7 @@
 
 Simulation::Simulation(const int num_particles, const float orbit_radius, const float damping,
            const float brightness_modifier)
-    :orbit_radius(orbit_radius), damping(damping), time(0), brightness_modifier(brightness_modifier),
-	gravity(damping, 0.5f, 0.5f, orbit_radius)
+    :brightness_modifier(brightness_modifier), gravity(damping, 0.5f, 0.5f, orbit_radius)
 {
     particles.resize(num_particles);
     srand(0);
@@ -58,14 +57,10 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 void Simulation::update(const float delta_t)
 {
 	gravity.update(delta_t);
-    float cog_x = cos(time) * orbit_radius + 0.5f;
-    float cog_y = sin(time) * orbit_radius + 0.5f;
-    time += delta_t;
-	
     std::vector<Particle>::iterator itr;
     for(itr = particles.begin(); itr < particles.end(); itr++)
     {            
-        //itr->updatePosition(delta_t, cog_x, cog_y, damping);
+		//itr->updatePosition(delta_t, gravity.getX(), gravity.getY(), gravity.getDamping());
 		gravity.apply(*itr, delta_t);
     }
 }
