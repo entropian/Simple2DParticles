@@ -59,7 +59,7 @@ void Particle::updatePosition(const float delta_t, const float cog_x, const floa
         vy = -vy;
     }
 }
-
+/*
 void Particle::setX(const float x)
 {
     this->x = x;
@@ -109,3 +109,4 @@ void Particle::setDistToCOG(const float d)
 {
 	dist_to_cog = d;
 }
+*/

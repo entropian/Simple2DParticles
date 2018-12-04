@@ -10,20 +10,50 @@ public:
 
     void updatePosition(const float delta_t, const float cog_x, const float cog_y, const float damping);
 
-    void setX(const float x);
-    float getX() const;
+	__forceinline void setX(const float x)
+	{
+		this->x = x;
+	}
+	__forceinline float getX() const
+	{
+		return x;
+	}
 
-    void setY(const float y);
-    float getY() const;
+	__forceinline void setY(const float y)
+	{
+		this->y = y;
+	}
+	__forceinline float getY() const
+	{
+		return y;
+	}
 
-    void setVx(const float vx);
-    float getVx() const;
+	__forceinline void setVx(const float vx)
+	{
+		this->vx = vx;
+	}
+	__forceinline float getVx() const
+	{
+		return vx;
+	}
 
-    void setVy(const float vy);
-    float getVy() const;
+	__forceinline void setVy(const float vy)
+	{
+		this->vy = vy;
+	}
+	__forceinline float getVy() const
+	{
+		return vy;
+	}
 
-    float getDistToCOG() const;
-	void setDistToCOG(const float d);
+	__forceinline float getDistToCOG() const
+	{
+		return dist_to_cog;
+	}
+	__forceinline void setDistToCOG(const float d)
+	{
+		dist_to_cog = d;
+	}
 private:
     float x, y;
     float vx, vy;
