@@ -1,3 +1,4 @@
 TODO:
 Take aspect ratio into account
-Adjust brightness according to the number of particles. 
+Add changeable force
+-types: gravity, downward gravity, vortex, wind, harmonic 

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "particle.h"
+#include "force.h"
 
 class Viewport;
 class Canvas;
@@ -18,6 +19,8 @@ public:
     void draw(Canvas* canvas);
 private:
     std::vector<Particle> particles;
+
+	Gravity gravity;
     float orbit_center;
     float orbit_radius;
     float damping;

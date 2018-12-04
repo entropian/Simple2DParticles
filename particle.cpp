@@ -104,3 +104,8 @@ float Particle::getDistToCOG() const
 {
     return dist_to_cog;
 }
+
+void Particle::setDistToCOG(const float d)
+{
+	dist_to_cog = d;
+}

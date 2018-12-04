@@ -23,6 +23,7 @@ public:
     float getVy() const;
 
     float getDistToCOG() const;
+	void setDistToCOG(const float d);
 private:
     float x, y;
     float vx, vy;
