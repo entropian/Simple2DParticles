@@ -2,6 +2,7 @@
 #include <vector>
 #include "particle.h"
 #include "force.h"
+#include "particle_emitter.h"
 
 class Viewport;
 class Canvas;
@@ -25,4 +26,5 @@ private:
 	Gravity gravity;
     ForceEmitter* force;
     float brightness_modifier;
+	ParticleEmitter p_emitter;
 };

@@ -10,7 +10,7 @@
 
 
 Simulation::Simulation(const int num_particles, const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), force(nullptr)
+    :brightness_modifier(brightness_modifier), force(nullptr), p_emitter()
 {
     particles.resize(num_particles);
     srand(0);
@@ -80,12 +80,14 @@ void Simulation::update(const float delta_t)
 {
     force->update(delta_t);
     std::vector<Particle>::iterator itr;
-    
 	for(itr = particles.begin(); itr < particles.end(); itr++)
     {            
         force->apply(*itr, delta_t);
 		itr->updatePosition(delta_t);
     }
+	std::vector<Particle> new_particles;
+	p_emitter.emit(new_particles, delta_t);
+	particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 }
 
 void Simulation::draw(Canvas* canvas)
