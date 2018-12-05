@@ -16,11 +16,10 @@ public:
 
     void setForceGravity(Gravity& gravity);    
     void setForceWind(Wind& wind);
-
-    void update(const float delta_t);
-
-    void draw(Canvas* canvas);
 private:
+	void update(const float delta_t);
+	void draw(Canvas* canvas);
+
     std::vector<Particle> particles;
 
 	Gravity gravity;

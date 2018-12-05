@@ -17,12 +17,11 @@ Simulation::Simulation(const int num_particles, const float brightness_modifier)
     std::vector<Particle>::iterator itr;
     for(itr = particles.begin(); itr < particles.end(); itr++)
     {
-        itr->setX(float(rand()) / float(RAND_MAX));
-        itr->setY(float(rand()) / float(RAND_MAX));
+		float x = float(rand()) / float(RAND_MAX);
+		float y = float(rand()) / float(RAND_MAX);
+		*itr = Particle(x, y);
         //itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
-        //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
-        itr->setVx(0);
-        itr->setVy(0);            
+        //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f); 
     }
 }
 
@@ -85,6 +84,7 @@ void Simulation::update(const float delta_t)
 	for(itr = particles.begin(); itr < particles.end(); itr++)
     {            
         force->apply(*itr, delta_t);
+		itr->updatePosition(delta_t);
     }
 }
 
