@@ -9,9 +9,8 @@
 #include "util.h"
 
 
-Simulation::Simulation(const int num_particles, const float orbit_radius, const float damping,
-           const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), gravity(damping, 0.5f, 0.5f, orbit_radius)
+Simulation::Simulation(const int num_particles, const float brightness_modifier)
+    :brightness_modifier(brightness_modifier), force(nullptr)
 {
     particles.resize(num_particles);
     srand(0);
@@ -25,6 +24,21 @@ Simulation::Simulation(const int num_particles, const float orbit_radius, const 
         itr->setVx(0);
         itr->setVy(0);            
     }
+}
+
+Simulation::~Simulation()
+{
+    if(!force)
+        delete force;
+}
+
+void Simulation::setForceGravity(Gravity& g)
+{
+    if(!force)
+        delete force;
+    Gravity* gravity = new Gravity();
+    *gravity = g;
+    force = reinterpret_cast<ForceEmitter*>(gravity);
 }
 
 static const double display_time_interval = 1.0;
@@ -56,12 +70,12 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 void Simulation::update(const float delta_t)
 {
-	gravity.update(delta_t);
+    force->update(delta_t);
     std::vector<Particle>::iterator itr;
     
 	for(itr = particles.begin(); itr < particles.end(); itr++)
     {            
-		gravity.apply(*itr, delta_t);
+        force->apply(*itr, delta_t);
     }
 }
 

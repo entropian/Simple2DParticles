@@ -9,10 +9,12 @@ class Canvas;
 class Simulation
 {
 public:
-    Simulation(const int num_particles, const float orbit_radius, const float damping,
-               const float brightness_modifier);
+    Simulation(const int num_particles, const float brightness_modifier);
+    ~Simulation();
 
 	void run(Canvas* canvas, Viewport* viewport);
+
+    void setForceGravity(Gravity& gravity);
 
     void update(const float delta_t);
 
@@ -21,5 +23,6 @@ private:
     std::vector<Particle> particles;
 
 	Gravity gravity;
+    ForceEmitter* force;
     float brightness_modifier;
 };

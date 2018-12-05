@@ -1,10 +1,18 @@
 #pragma once
 #include "particle.h"
 
-
-class Gravity
+class ForceEmitter
 {
 public:
+    virtual void update(const float delta_t) = 0;
+    virtual void apply(Particle& p, const float delta_t) = 0;    
+};
+
+
+class Gravity : ForceEmitter
+{
+public:
+    Gravity();
 	Gravity(const float damping,
 		const float orbit_center_x = 0.5f, const float orbit_center_y = 0.5f,
 		const float orbit_radius = 0.05f);
@@ -16,7 +24,7 @@ public:
 
 	float getY() const;
 	void setY(const float y);
-
+    
 	float getDamping()const;
 	void setDamping(const float damping);
 
@@ -84,4 +92,22 @@ private:
 	float orbit_radius;
 	float time;
 	float damping;
+};
+
+
+class Wind
+{
+public:
+    Wind();
+    Wind(const float x, const float y);
+    void apply(Particle& p, const float delta_t);
+
+    float getX() const;
+    void setX();
+
+    float getY() const;
+    void setY();
+private:
+    float x, y;
+    float magnitude;
 };

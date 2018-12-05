@@ -20,8 +20,10 @@ int main(int argc, char* argv[])
 	Viewport viewport(width, height);
 	Canvas canvas(width, height, 0, 0.0f);
 	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
-    
-    Simulation sim(num_particles, 0.05, 0.80, brightness_modifier);
+
+    Simulation sim(num_particles, brightness_modifier);
+    Gravity gravity(0.8f, 0.5f, 0.5f, 0.05f);
+    sim.setForceGravity(gravity);
 	sim.run(&canvas, &viewport);
     return 0;
 }

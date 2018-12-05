@@ -2,6 +2,10 @@
 #include <cassert>
 #include <cmath>
 
+#ifdef __GNUC__
+#define __forceinline 
+#endif
+
 class Particle
 {
 public:
