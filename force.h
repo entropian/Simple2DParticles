@@ -10,10 +10,13 @@ public:
 		const float orbit_radius = 0.05f);
 	
 	void update(const float delta_t);
+
 	float getX() const;
 	void setX(const float x);
+
 	float getY() const;
 	void setY(const float y);
+
 	float getDamping()const;
 	void setDamping(const float damping);
 
