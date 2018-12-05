@@ -41,6 +41,15 @@ void Simulation::setForceGravity(Gravity& g)
     force = reinterpret_cast<ForceEmitter*>(gravity);
 }
 
+void Simulation::setForceWind(Wind& w)
+{
+    if(!force)
+        delete force;
+    Wind* wind = new Wind();
+    *wind = w;
+    force = reinterpret_cast<ForceEmitter*>(wind);
+}
+
 static const double display_time_interval = 1.0;
 
 void Simulation::run(Canvas* canvas, Viewport* viewport)

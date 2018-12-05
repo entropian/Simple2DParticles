@@ -95,19 +95,58 @@ private:
 };
 
 
-class Wind
+class Wind : ForceEmitter
 {
 public:
     Wind();
-    Wind(const float x, const float y);
-    void apply(Particle& p, const float delta_t);
+    Wind(const float x, const float y, const float mag);
+    void update(const float delta_t);
 
     float getX() const;
-    void setX();
+    void setX(const float v);
 
     float getY() const;
-    void setY();
+    void setY(const float v);
+
+    __forceinline void apply(Particle& p, const float delta_t)
+    {
+		float px = p.getX();
+		float py = p.getY();
+		float vx = p.getVx();
+		float vy = p.getVy();
+
+        vx += x * magnitude;
+        vy += y * magnitude;
+
+        px += vx * delta_t;
+		py += vy * delta_t;
+		if (px >= 1.0f)
+		{
+			px -= px - 1.0f + 0.0001f;
+			vx = -vx;
+		}
+		if (px < 0.0f)
+		{
+			px = -px;
+			vx = -vx;
+		}
+		if (py > 1.0f)
+		{
+			py -= py - 1.0f;
+			vy = -vy;
+		}
+		if (py <= 0.0f)
+		{
+			py = -py + 0.0001f;
+			vy = -vy;
+		}
+		p.setX(px);
+		p.setY(py);
+		p.setVx(vx);
+		p.setVy(vy);
+    }
 private:
     float x, y;
     float magnitude;
+    float time;
 };

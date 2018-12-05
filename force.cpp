@@ -41,3 +41,34 @@ void Gravity::setDamping(const float d)
 {
 	damping = d;
 }
+
+
+Wind::Wind():x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
+
+Wind::Wind(const float x, const float y, const float mag):x(x), y(y), magnitude(mag), time(0.0f){}
+
+void Wind::update(const float delta_t)
+{
+    // TODO: add something
+    time += delta_t;
+}
+
+float Wind::getX() const
+{
+    return x;
+}
+
+void Wind::setX(const float v)
+{
+    x = v;
+}
+
+float Wind::getY() const
+{
+    return y;
+}
+
+void Wind::setY(const float v)
+{
+    y = v;
+}

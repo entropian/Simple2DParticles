@@ -14,7 +14,8 @@ public:
 
 	void run(Canvas* canvas, Viewport* viewport);
 
-    void setForceGravity(Gravity& gravity);
+    void setForceGravity(Gravity& gravity);    
+    void setForceWind(Wind& wind);
 
     void update(const float delta_t);
 
