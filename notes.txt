@@ -1,4 +1,5 @@
 TODO:
 Take aspect ratio into account
 Add changeable force
+Custom functions for color calculations
 -types: gravity, downward gravity, vortex, wind, harmonic 

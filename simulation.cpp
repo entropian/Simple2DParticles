@@ -95,6 +95,8 @@ void Simulation::applyForce(Particle& p, const float delta_t)
     force->calcForce(force_x, force_y, p, delta_t);
     p.setVx(p.getVx() + force_x);
     p.setVy(p.getVy() + force_y);
+	auto force_mag = sqrtf(force_x * force_x + force_y * force_y);
+	p.setForceMag(force_mag);
 }
 
 void Simulation::update(const float delta_t)
@@ -119,10 +121,16 @@ void Simulation::draw(Canvas* canvas)
     for(itr = particles.begin(); itr < particles.end(); itr++)
     {
             
+		/*
         canvas->drawParticle(itr->getX(), itr->getY(),
                          clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
                          0.5f * brightness_modifier,
                          clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
+						 */
+		canvas->drawParticle(itr->getX(), itr->getY(),
+			clamp(sqrtf(itr->getForceMag()) * 40.0f, 0.0f, 1.0f) * brightness_modifier,
+			0.5f * brightness_modifier,
+			clamp(1.0f - sqrtf(itr->getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);
     }
 	canvas->calcImage();
 }

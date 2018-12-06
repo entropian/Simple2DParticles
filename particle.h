@@ -9,9 +9,9 @@
 class Particle
 {
 public:
-    Particle();
+	Particle();
 	Particle(const float x, const float y, const float vx = 0.0f, const float vy = 0.0f);
-		
+
 	__forceinline void updatePosition(const float delta_t)
 	{
 		x += vx * delta_t;
@@ -66,17 +66,19 @@ public:
 		return vy;
 	}
 
-	__forceinline float getDistToCOG() const
+	__forceinline float getForceMag() const
 	{
-		return dist_to_cog;
+		return force_magnitude;
 	}
-	__forceinline void setDistToCOG(const float d)
+
+	__forceinline void setForceMag(const float a)
 	{
-		dist_to_cog = d;
+		force_magnitude = a;
 	}
 private:
     float x, y;
     float vx, vy;
     float dist_to_cog;
+	float force_magnitude;
 };
 
