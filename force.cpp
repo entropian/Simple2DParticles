@@ -1,11 +1,10 @@
 #include "force.h"
 #include <cmath>
 
-Gravity::Gravity():damping(0.8f), orbit_center_x(0.5f), orbit_center_y(0.5f), orbit_radius(0.05f){}
+Gravity::Gravity():orbit_center_x(0.5f), orbit_center_y(0.5f), orbit_radius(0.05f){}
 
-Gravity::Gravity(const float damping,
-	const float ox, const float oy, const float radius)
-	:damping(damping), orbit_center_x(ox), orbit_center_y(oy), orbit_radius(radius),
+Gravity::Gravity(const float ox, const float oy, const float radius)
+	:orbit_center_x(ox), orbit_center_y(oy), orbit_radius(radius),
 	time(0.0f) {}
 
 void Gravity::update(const float delta_t)
@@ -31,17 +30,6 @@ void Gravity::setY(const float y)
 {
 	this->y = y;
 }
-
-float Gravity::getDamping() const
-{
-	return damping;
-}
-
-void Gravity::setDamping(const float d)
-{
-	damping = d;
-}
-
 
 Wind::Wind():x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
 

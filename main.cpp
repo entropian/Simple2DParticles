@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	float brightness_modifier = calcBrightnessModifier(num_particles, width, height);
 
     Simulation sim(num_particles, brightness_modifier);
-    Gravity gravity(0.8f, 0.5f, 0.5f, 0.05f);
+    Gravity gravity(0.5f, 0.5f, 0.05f);
     Wind wind(1.0f, 0.0f, 0.01f);
     sim.setForceGravity(gravity);
     //sim.setForceWind(wind);

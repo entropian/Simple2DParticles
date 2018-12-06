@@ -5,7 +5,8 @@ class ForceEmitter
 {
 public:
     virtual void update(const float delta_t) = 0;
-    virtual void apply(Particle& p, const float delta_t) = 0;    
+    virtual void apply(Particle& p, const float delta_t) = 0;
+    virtual void calcForce(float& x, float& y, const Particle& p, const float delta_t) = 0;
 };
 
 
@@ -13,8 +14,7 @@ class Gravity : ForceEmitter
 {
 public:
     Gravity();
-	Gravity(const float damping,
-		const float orbit_center_x = 0.5f, const float orbit_center_y = 0.5f,
+	Gravity(const float orbit_center_x, const float orbit_center_y,
 		const float orbit_radius = 0.05f);
 	
 	void update(const float delta_t);
@@ -25,21 +25,16 @@ public:
 	float getY() const;
 	void setY(const float y);
     
-	float getDamping()const;
-	void setDamping(const float damping);
+	//float getDamping()const;
+	//void setDamping(const float damping);
 
 	// Apply force on particle p over delta_t
 	__forceinline void apply(Particle& p, const float delta_t)
 	{
-		static const float G = 0.6f;
-		static const float modifier = 0.01f;
 		float px = p.getX();
 		float py = p.getY();
 		float vx = p.getVx();
 		float vy = p.getVy();
-		const float dampened = 1.0f - ((1.0f - damping) * delta_t);
-		vx *= 1.0f - ((1.0f - damping) * delta_t);
-		vy *= 1.0f - ((1.0f - damping) * delta_t);
 
 		float cog_dist_x = x - px;
 		float cog_dist_y = y - py;
@@ -61,12 +56,18 @@ public:
 		p.setVx(vx);
 		p.setVy(vy);
 	}
+
+    void calcForce(float& x, float& y, const Particle& p, const float delta_t)
+    {
+        
+    }
 private:
+    static constexpr float G = 0.6f;
+    static constexpr float modifier = 0.01f;                
 	float x, y;		// Center of gravity
 	float orbit_center_x, orbit_center_y;
 	float orbit_radius;
 	float time;
-	float damping;
 };
 
 
@@ -91,6 +92,11 @@ public:
         vy += y * magnitude;
 		p.setVx(vx);
 		p.setVy(vy);
+    }
+
+    void calcForce(float& x, float& y, const Particle& p, const float delta_t)
+    {
+
     }
 private:
     float x, y;

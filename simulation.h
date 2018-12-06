@@ -20,11 +20,11 @@ public:
 private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);
+    void dampenParticle(Particle& p, const float delta_t);
 
     std::vector<Particle> particles;
-
-	Gravity gravity;
     ForceEmitter* force;
     float brightness_modifier;
 	ParticleEmitter p_emitter;
+    float damping;
 };

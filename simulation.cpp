@@ -10,7 +10,7 @@
 
 
 Simulation::Simulation(const int num_particles, const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), force(nullptr), p_emitter()
+    :brightness_modifier(brightness_modifier), force(nullptr), p_emitter(), damping(0.8f)
 {
     particles.resize(num_particles);
     srand(0);
@@ -76,12 +76,26 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	}
 }
 
-void Simulation::update(const float delta_t)
+void Simulation::dampenParticle(Particle& p, const float delta_t)
 {
+    float px = p.getX();
+    float py = p.getY();
+    float vx = p.getVx();
+    float vy = p.getVy();
+    const float dampened = 1.0f - ((1.0f - damping) * delta_t);
+    vx *= 1.0f - ((1.0f - damping) * delta_t);
+    vy *= 1.0f - ((1.0f - damping) * delta_t);
+    p.setVx(vx);
+    p.setVy(vy);    
+}
+
+void Simulation::update(const float delta_t)
+{    
     force->update(delta_t);
     std::vector<Particle>::iterator itr;
 	for(itr = particles.begin(); itr < particles.end(); itr++)
-    {            
+    {
+        dampenParticle(*itr, delta_t);
         force->apply(*itr, delta_t);
 		itr->updatePosition(delta_t);
     }
