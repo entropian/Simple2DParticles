@@ -89,14 +89,23 @@ void Simulation::dampenParticle(Particle& p, const float delta_t)
     p.setVy(vy);    
 }
 
+void Simulation::applyForce(Particle& p, const float delta_t)
+{
+    float force_x, force_y;
+    force->calcForce(force_x, force_y, p, delta_t);
+    p.setVx(p.getVx() + force_x);
+    p.setVy(p.getVy() + force_y);
+}
+
 void Simulation::update(const float delta_t)
 {    
     force->update(delta_t);
     std::vector<Particle>::iterator itr;
 	for(itr = particles.begin(); itr < particles.end(); itr++)
     {
-        dampenParticle(*itr, delta_t);
-        force->apply(*itr, delta_t);
+        dampenParticle(*itr, delta_t); // NOTE: moving this out of Gravity noticeably lowered FPS
+                                       // inline?
+        applyForce(*itr, delta_t);
 		itr->updatePosition(delta_t);
     }
 	std::vector<Particle> new_particles;

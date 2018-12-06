@@ -21,6 +21,7 @@ private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);
     void dampenParticle(Particle& p, const float delta_t);
+    void applyForce(Particle& p, const float delta_t);
 
     std::vector<Particle> particles;
     ForceEmitter* force;

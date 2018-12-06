@@ -6,7 +6,7 @@ class ForceEmitter
 public:
     virtual void update(const float delta_t) = 0;
     virtual void apply(Particle& p, const float delta_t) = 0;
-    virtual void calcForce(float& x, float& y, const Particle& p, const float delta_t) = 0;
+    virtual void calcForce(float& x, float& y, Particle& p, const float delta_t) = 0;
 };
 
 
@@ -43,7 +43,7 @@ public:
 		{
 			dist_to_cog_squared = 0.001f;
 		}
-		p.setDistToCOG(sqrtf(dist_to_cog_squared));
+		p.setDistToCOG(sqrtf(dist_to_cog_squared)); // TODO: get rid of this
 		// f = G*m1*m2 / r*r
 		// Assume m1 == m2 == 1?
 		float f = G / dist_to_cog_squared;
@@ -57,9 +57,28 @@ public:
 		p.setVy(vy);
 	}
 
-    void calcForce(float& x, float& y, const Particle& p, const float delta_t)
+    __forceinline void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t)
     {
-        
+		float px = p.getX();
+		float py = p.getY();
+		float vx = p.getVx();
+		float vy = p.getVy();
+
+		float cog_dist_x = x - px;
+		float cog_dist_y = y - py;
+		float dist_to_cog_squared = cog_dist_x * cog_dist_x + cog_dist_y * cog_dist_y;
+		if (dist_to_cog_squared < 0.001f)
+		{
+			dist_to_cog_squared = 0.001f;
+		}
+		p.setDistToCOG(sqrtf(dist_to_cog_squared));
+		// f = G*m1*m2 / r*r
+		// Assume m1 == m2 == 1?
+		float f = G / dist_to_cog_squared;
+		float f_dir_x = cog_dist_x / p.getDistToCOG();
+		float f_dir_y = cog_dist_y / p.getDistToCOG();
+		out_x = f * f_dir_x * delta_t * modifier;
+		out_y = f * f_dir_y * delta_t * modifier;        
     }
 private:
     static constexpr float G = 0.6f;
@@ -94,7 +113,7 @@ public:
 		p.setVy(vy);
     }
 
-    void calcForce(float& x, float& y, const Particle& p, const float delta_t)
+    void calcForce(float& x, float& y, Particle& p, const float delta_t)
     {
 
     }
