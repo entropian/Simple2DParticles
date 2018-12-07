@@ -44,6 +44,11 @@ void Simulation::addForceWind(Wind& w)
     forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
 }
 
+void Simulation::addParticleEmitter(const float x, const float y, const float p_per_sec)
+{
+	p_emitters.push_back(ParticleEmitter(x, y, p_per_sec));
+}
+
 static const double display_time_interval = 1.0;
 
 void Simulation::run(Canvas* canvas, Viewport* viewport)
@@ -100,6 +105,16 @@ void Simulation::applyForces(Particle& p, const float delta_t)
 	p.setForceMag(force_mag);
 }
 
+void Simulation::emitParticles(const float delta_t)
+{
+	for (auto &pe : p_emitters)
+	{
+		std::vector<Particle> new_particles;
+		pe.emit(new_particles, delta_t);
+		particles.insert(particles.end(), new_particles.begin(), new_particles.end());
+	}
+}
+
 void Simulation::updateForces(const float delta_t)
 {
 	for (auto& f : forces)
@@ -119,9 +134,7 @@ void Simulation::update(const float delta_t)
         applyForces(p, delta_t);
 		p.updatePosition(delta_t);
     }
-	std::vector<Particle> new_particles;
-	p_emitter.emit(new_particles, delta_t);
-	particles.insert(particles.end(), new_particles.begin(), new_particles.end());
+	emitParticles(delta_t);
 }
 
 void Simulation::draw(Canvas* canvas)

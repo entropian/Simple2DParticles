@@ -17,16 +17,19 @@ public:
 
     void addForceGravity(Gravity& gravity);    
     void addForceWind(Wind& wind);
+	void addParticleEmitter(const float x, const float y, const float p_per_sec);
 private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);
     void dampenParticle(Particle& p, const float delta_t);
 	void updateForces(const float delta_t);
     void applyForces(Particle& p, const float delta_t);
+	void emitParticles(const float delta_t);
 
     std::vector<Particle> particles;
 	std::vector<ForceEmitter*> forces;
     float brightness_modifier;
 	ParticleEmitter p_emitter;
+	std::vector<ParticleEmitter> p_emitters;
     float damping;
 };
