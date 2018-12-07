@@ -8,16 +8,16 @@ Canvas::Canvas(const int w, const int h, const int particle_size, const float fa
 	width(w), height(h), num_pixels(w * h), point_size(particle_size), fade_time(fade_time)
 {
     image.resize(num_pixels * 3);
-    for(std::vector<unsigned char>::iterator itr = image.begin(); itr != image.end(); itr++)
+	for(auto &c : image)
     {
-        *itr = 0;
+        c = 0;
     }
 	if (fade_time > 0.0f)
 	{
 		draw_buffer.resize(num_pixels * 3);
-		for (std::vector<unsigned char>::iterator itr = draw_buffer.begin(); itr != draw_buffer.end(); itr++)
+		for(auto &c : draw_buffer)
 		{
-			*itr = 0;
+			c = 0;
 		}
 	}
 }

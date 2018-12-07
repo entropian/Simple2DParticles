@@ -15,16 +15,17 @@ public:
 
 	void run(Canvas* canvas, Viewport* viewport);
 
-    void setForceGravity(Gravity& gravity);    
-    void setForceWind(Wind& wind);
+    void addForceGravity(Gravity& gravity);    
+    void addForceWind(Wind& wind);
 private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);
     void dampenParticle(Particle& p, const float delta_t);
-    void applyForce(Particle& p, const float delta_t);
+	void updateForces(const float delta_t);
+    void applyForces(Particle& p, const float delta_t);
 
     std::vector<Particle> particles;
-    ForceEmitter* force;
+	std::vector<ForceEmitter*> forces;
     float brightness_modifier;
 	ParticleEmitter p_emitter;
     float damping;

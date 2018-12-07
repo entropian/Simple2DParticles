@@ -10,16 +10,16 @@
 
 
 Simulation::Simulation(const int num_particles, const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), force(nullptr), p_emitter(), damping(0.8f)
+    :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f)
 {
     particles.resize(num_particles);
     srand(0);
     std::vector<Particle>::iterator itr;
-    for(itr = particles.begin(); itr < particles.end(); itr++)
+	for(auto& p : particles)
     {
 		float x = float(rand()) / float(RAND_MAX);
 		float y = float(rand()) / float(RAND_MAX);
-		*itr = Particle(x, y);
+		p = Particle(x, y);
         //itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
         //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f); 
     }
@@ -27,26 +27,21 @@ Simulation::Simulation(const int num_particles, const float brightness_modifier)
 
 Simulation::~Simulation()
 {
-    if(!force)
-        delete force;
+
 }
 
-void Simulation::setForceGravity(Gravity& g)
+void Simulation::addForceGravity(Gravity& g)
 {
-    if(!force)
-        delete force;
     Gravity* gravity = new Gravity();
     *gravity = g;
-    force = reinterpret_cast<ForceEmitter*>(gravity);
+    forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
 }
 
-void Simulation::setForceWind(Wind& w)
+void Simulation::addForceWind(Wind& w)
 {
-    if(!force)
-        delete force;
     Wind* wind = new Wind();
     *wind = w;
-    force = reinterpret_cast<ForceEmitter*>(wind);
+    forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
 }
 
 static const double display_time_interval = 1.0;
@@ -89,26 +84,40 @@ void Simulation::dampenParticle(Particle& p, const float delta_t)
     p.setVy(vy);    
 }
 
-void Simulation::applyForce(Particle& p, const float delta_t)
+void Simulation::applyForces(Particle& p, const float delta_t)
 {
-    float force_x, force_y;
-    force->calcForce(force_x, force_y, p, delta_t);
+    float force_x = 0.0f, force_y = 0.0f;
+	for(auto& f : forces)
+	{
+		float fx, fy;
+		f->calcForce(fx, fy, p, delta_t);
+		force_x += fx;
+		force_y += fy;
+	}
     p.setVx(p.getVx() + force_x);
     p.setVy(p.getVy() + force_y);
 	auto force_mag = sqrtf(force_x * force_x + force_y * force_y);
 	p.setForceMag(force_mag);
 }
 
+void Simulation::updateForces(const float delta_t)
+{
+	for (auto& f : forces)
+	{
+		f->update(delta_t);
+	}
+}
+
 void Simulation::update(const float delta_t)
 {    
-    force->update(delta_t);
+	updateForces(delta_t);
     std::vector<Particle>::iterator itr;
-	for(itr = particles.begin(); itr < particles.end(); itr++)
+	for(auto& p : particles)
     {
-        dampenParticle(*itr, delta_t); // NOTE: moving this out of Gravity noticeably lowered FPS
+        dampenParticle(p, delta_t); // NOTE: moving this out of Gravity noticeably lowered FPS
                                        // inline?
-        applyForce(*itr, delta_t);
-		itr->updatePosition(delta_t);
+        applyForces(p, delta_t);
+		p.updatePosition(delta_t);
     }
 	std::vector<Particle> new_particles;
 	p_emitter.emit(new_particles, delta_t);
@@ -118,19 +127,19 @@ void Simulation::update(const float delta_t)
 void Simulation::draw(Canvas* canvas)
 {
     std::vector<Particle>::iterator itr;
-    for(itr = particles.begin(); itr < particles.end(); itr++)
+	for(auto& p : particles)
     {
             
 		/*
-        canvas->drawParticle(itr->getX(), itr->getY(),
-                         clamp(0.1 / itr->getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
+        canvas->drawParticle(p.getX(), p.getY(),
+                         clamp(0.1 / p.getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
                          0.5f * brightness_modifier,
-                         clamp((1.0 - 0.1 / itr->getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
+                         clamp((1.0 - 0.1 / p.getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
 						 */
-		canvas->drawParticle(itr->getX(), itr->getY(),
-			clamp(sqrtf(itr->getForceMag()) * 40.0f, 0.0f, 1.0f) * brightness_modifier,
+		canvas->drawParticle(p.getX(), p.getY(),
+			clamp(sqrtf(p.getForceMag()) * 40.0f, 0.0f, 1.0f) * brightness_modifier,
 			0.5f * brightness_modifier,
-			clamp(1.0f - sqrtf(itr->getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);
+			clamp(1.0f - sqrtf(p.getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);
     }
 	canvas->calcImage();
 }

@@ -78,7 +78,6 @@ public:
 private:
     float x, y;
     float vx, vy;
-    float dist_to_cog;
 	float force_magnitude;
 };
 

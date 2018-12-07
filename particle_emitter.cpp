@@ -12,11 +12,10 @@ void ParticleEmitter::emit(std::vector<Particle>& output, const float delta_t)
 			output_size = 1;
 	}
 	output.resize(output_size);
-	output.clear();
-	for (int i = 0; i < output_size; i++)
+	for(auto &p : output)
 	{
 		float a = (float(rand()) / float(RAND_MAX) * 2.0f - 1.0f) * 0.05f;
 		float b = (float(rand()) / float(RAND_MAX) * 2.0f - 1.0f) * 0.05f;
-		output.push_back(Particle(x, y, a, b));
+		p = Particle(x, y, a, b);
 	}
 }
