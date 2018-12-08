@@ -1,3 +1,6 @@
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "simulation.h"
@@ -7,6 +10,7 @@
 #include "gl/glcode.h"
 #include "canvas.h"
 #include "util.h"
+
 
 
 Simulation::Simulation(const int num_particles, const float brightness_modifier)
@@ -54,12 +58,34 @@ static const double display_time_interval = 1.0;
 void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 {
+	bool show_test_window = true;
+	bool show_another_window = false;
+	ImVec4 clear_color = ImColor(114, 114, 154);
+
 	const double display_time_interval = 1.0;
 	double prev_time = glfwGetTime();
 	double last_display_time = prev_time;
 	bool running = true;
 	while (running)
 	{
+		ImGui_ImplGlfwGL3_NewFrame();
+		/
+		{
+			auto f = 0.0f;
+			ImGui::Text("Hellow, world!");
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("clear color", (float*)&clear_color);
+			if (ImGui::Button("Test Window")) show_test_window ^= 1;
+			if (ImGui::Button("Another Window")) show_another_window ^= 1;
+			ImGui::Text("Application average &.3f ms/frame (%.1f FPS)",
+				1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		}
+		if(show_test_window)
+		{
+			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+			ImGui::ShowTestWindow(&show_test_window);
+		}
+		*
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);

@@ -5,13 +5,17 @@
 #include "platform.h"
 #include <iostream>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
+
 int main(int argc, char* argv[])
 {
 #ifdef _WIN32
 	// Restricts process to CPU 1, because core switching causes jitter
 	setAffinity();
 #endif
-	int num_particles = 70000;
+	auto num_particles = 70000;
 	if (argc > 1)
 	{
 		num_particles = atoi(argv[1]);
@@ -32,6 +36,10 @@ int main(int argc, char* argv[])
 	sim.addParticleEmitter(0.15f, 0.15f, 1000.0f);
 	sim.addParticleEmitter(0.15, 0.75f, 500.0f);
 
+	ImGui_ImplGlfwGL3_Init(viewport.getWindow(), true);
+
 	sim.run(&canvas, &viewport);
+
+	ImGui_ImplGlfwGL3_Shutdown();
     return 0;
 }

@@ -10,7 +10,10 @@ public:
 	void initViewport();
 	void initWindow(const int width, const int height);
 	void displayImage(const unsigned char* image, const int width, const int height);
-
+	GLFWwindow* getWindow()
+	{
+		return window;
+	}
 private:
 	GlViewport* viewport;
 	GLFWwindow* window;
