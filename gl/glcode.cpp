@@ -73,26 +73,36 @@ Viewport::Viewport(const int width, const int height)
 	initWindow(width, height);
 	if (window)
 	{
-		initViewport();
+		initViewport(float(width) / float(height));
 		//glfwSetMouseButtonCallback(window, mouseButtonCallback);
 	}
 }
 
-void Viewport::initViewport()
+void Viewport::initViewport(const float aspect_ratio)
 {
 	viewport = new GlViewport;
 	readAndCompileShaders(basicVertSrc, basicFragSrc, &(viewport->shaderProgram));
 	glUseProgram(viewport->shaderProgram);
 
+	float h_extent = 1.0f / aspect_ratio * 2.0f;
+
 	GLfloat vertices[] = {
-		-1.0f,  -1.0f, 0.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f-h_extent,  -1.0f, 0.0f, 0.0f,
+		1.0f-h_extent, 1.0f, 0.0f, 1.0f,
 		1.0f, -1.0f, 1.0f, 0.0f,
-		1.0, -1.0, 1.0f, 0.0f,
-		-1.0, 1.0, 0.0f, 1.0f,
-		1.0, 1.0, 1.0f, 1.0f
+		1.0f, -1.0, 1.0f, 0.0f,
+		1.0f-h_extent, 1.0, 0.0f, 1.0f,
+		1.0f, 1.0, 1.0f, 1.0f
 	};
 
+	//GLfloat vertices[] = {
+	//-1.0f,  -1.0f, 0.0f, 0.0f,
+	//-1.0f, 1.0f, 0.0f, 1.0f,
+	//1.0f, -1.0f, 1.0f, 0.0f,
+	//1.0, -1.0, 1.0f, 0.0f,
+	//-1.0, 1.0, 0.0f, 1.0f,
+	//1.0, 1.0, 1.0f, 1.0f
+	//};
 
 	glGenVertexArrays(1, &(viewport->vao));
 	glBindVertexArray(viewport->vao);
@@ -157,7 +167,7 @@ void Viewport::displayImage(const unsigned char* image, int width, int height)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	ImGui::Render();

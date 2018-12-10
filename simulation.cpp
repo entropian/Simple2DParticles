@@ -67,7 +67,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	while (running)
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
-		/*
+		
 		{
 			auto f = 0.0f;
 			ImGui::Text("Hellow, world!");
@@ -83,7 +83,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
 			ImGui::ShowTestWindow(&show_test_window);
 		}
-		*/
+		
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);
