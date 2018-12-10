@@ -13,20 +13,18 @@
 
 
 
-Simulation::Simulation(const int num_particles, const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f)
+
+Simulation::Simulation(const int max_particles, const float brightness_modifier)
+    :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f), particles(max_particles)
 {
-    particles.resize(num_particles);
-    srand(0);
-    std::vector<Particle>::iterator itr;
-	for(auto& p : particles)
-    {
-		float x = float(rand()) / float(RAND_MAX);
-		float y = float(rand()) / float(RAND_MAX);
-		p = Particle(x, y);
-        //itr->setVx(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f);
-        //itr->setVy(((float(rand()) / float(RAND_MAX)) - 0.5f) * 0.2f); 
-    }
+ //   srand(0);
+ //   std::vector<Particle>::iterator itr;
+	//for(auto& p : particles)
+ //   {
+	//	float x = float(rand()) / float(RAND_MAX);
+	//	float y = float(rand()) / float(RAND_MAX);
+	//	particles.push_back(p);
+ //   }
 }
 
 Simulation::~Simulation()
@@ -69,7 +67,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	while (running)
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
-		/
+		/*
 		{
 			auto f = 0.0f;
 			ImGui::Text("Hellow, world!");
@@ -85,7 +83,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
 			ImGui::ShowTestWindow(&show_test_window);
 		}
-		*
+		*/
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);
@@ -167,8 +165,7 @@ void Simulation::draw(Canvas* canvas)
 {
     std::vector<Particle>::iterator itr;
 	for(auto& p : particles)
-    {
-            
+    {  
 		/*
         canvas->drawParticle(p.getX(), p.getY(),
                          clamp(0.1 / p.getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,

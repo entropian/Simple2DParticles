@@ -3,6 +3,7 @@
 #include "particle.h"
 #include "force.h"
 #include "particle_emitter.h"
+#include <boost/circular_buffer.hpp>
 
 class Viewport;
 class Canvas;
@@ -26,7 +27,7 @@ private:
     void applyForces(Particle& p, const float delta_t);
 	void emitParticles(const float delta_t);
 
-    std::vector<Particle> particles;
+	boost::circular_buffer<Particle> particles;
 	std::vector<ForceEmitter*> forces;
     float brightness_modifier;
 	ParticleEmitter p_emitter;
