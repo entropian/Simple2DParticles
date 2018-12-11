@@ -81,13 +81,10 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			ImGui::Text("Application average &.3f ms/frame (%.1f FPS)",
 				1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}*/
-		{
+		
+		{	// GUI code
 			if (ImGui::CollapsingHeader("Particle Emitters"))
 			{
-				// Display modifiable data:
-				// Position, velocity modifier, particles per second
-				
-				// Button for adding new particle emitters
 				std::vector<float> positions;
 				positions.resize(p_emitters.size() * 2);
 				std::vector<float> vel_modifiers;
@@ -104,7 +101,7 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 					{
 						p_emitters[i].setX(positions[2 * i]);
 						p_emitters[i].setY(positions[2 * i + 1]);
-					}		
+					}
 					vel_modifiers[i] = p_emitters[i].getVelocityModifier();
 					std::string vel_name("Velocity " + std::to_string(i));
 					if (ImGui::DragFloat(vel_name.c_str(), &(vel_modifiers[i]), 0.0001, 0.0f, 1.0f))
@@ -117,6 +114,14 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 					{
 						p_emitters[i].setParticlesPerSec(emit_rates[i]);
 					}
+					if (ImGui::Button("Delete"))
+					{
+						p_emitters.erase(p_emitters.begin() + i);
+					}
+				}
+				if (ImGui::Button("Add particle emitter"))
+				{
+					p_emitters.push_back(ParticleEmitter());
 				}
 			}
 
