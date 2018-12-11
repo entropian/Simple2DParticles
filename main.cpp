@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
     sim.addForceGravity(gravity1);
 	sim.addForceGravity(gravity2);
     sim.addForceWind(wind);
-	sim.addParticleEmitter(0.15f, 0.15f, 1000.0f);
-	sim.addParticleEmitter(0.15, 0.75f, 500.0f);
+	sim.addParticleEmitter(0.15f, 0.15f, 1000.0f, 0.05f);
+	sim.addParticleEmitter(0.15, 0.75f, 500.0f, 0.05f);
 
 	ImGui_ImplGlfwGL3_Init(viewport.getWindow(), true);
 

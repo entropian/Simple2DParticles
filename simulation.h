@@ -18,7 +18,8 @@ public:
 
     void addForceGravity(Gravity& gravity);    
     void addForceWind(Wind& wind);
-	void addParticleEmitter(const float x, const float y, const float p_per_sec);
+	void addParticleEmitter(const float x, const float y, const float p_per_sec,
+		const float vel_modifier);
 private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);

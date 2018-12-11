@@ -10,6 +10,7 @@
 #include "gl/glcode.h"
 #include "canvas.h"
 #include "util.h"
+#include <string>
 
 
 
@@ -46,9 +47,10 @@ void Simulation::addForceWind(Wind& w)
     forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
 }
 
-void Simulation::addParticleEmitter(const float x, const float y, const float p_per_sec)
+void Simulation::addParticleEmitter(const float x, const float y, const float p_per_sec,
+	const float vel_modifier)
 {
-	p_emitters.push_back(ParticleEmitter(x, y, p_per_sec));
+	p_emitters.push_back(ParticleEmitter(x, y, p_per_sec, vel_modifier));
 }
 
 static const double display_time_interval = 1.0;
@@ -64,11 +66,12 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	double prev_time = glfwGetTime();
 	double last_display_time = prev_time;
 	bool running = true;
+
 	while (running)
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
 		
-		{
+		/*{
 			auto f = 0.0f;
 			ImGui::Text("Hellow, world!");
 			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
@@ -77,6 +80,52 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			if (ImGui::Button("Another Window")) show_another_window ^= 1;
 			ImGui::Text("Application average &.3f ms/frame (%.1f FPS)",
 				1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		}*/
+		{
+			if (ImGui::CollapsingHeader("Particle Emitters"))
+			{
+				// Display modifiable data:
+				// Position, velocity modifier, particles per second
+				
+				// Button for adding new particle emitters
+				std::vector<float> positions;
+				positions.resize(p_emitters.size() * 2);
+				std::vector<float> vel_modifiers;
+				vel_modifiers.resize(p_emitters.size());
+				std::vector<float> emit_rates;
+				emit_rates.resize(p_emitters.size());
+				for (int i = 0; i < p_emitters.size(); i++)
+				{
+					positions[2 * i] = p_emitters[i].getX();
+					positions[2 * i + 1] = p_emitters[i].getY();
+					ImGui::TextWrapped("Emitter %d", i);
+					std::string pos_name("Position " + std::to_string(i));
+					if (ImGui::DragFloat2(pos_name.c_str(), &(positions[2 * i]), 0.003, 0.0f, 1.0f))
+					{
+						p_emitters[i].setX(positions[2 * i]);
+						p_emitters[i].setY(positions[2 * i + 1]);
+					}		
+					vel_modifiers[i] = p_emitters[i].getVelocityModifier();
+					std::string vel_name("Velocity " + std::to_string(i));
+					if (ImGui::DragFloat(vel_name.c_str(), &(vel_modifiers[i]), 0.0001, 0.0f, 1.0f))
+					{
+						p_emitters[i].setVelocityModifier(vel_modifiers[i]);
+					}
+					emit_rates[i] = p_emitters[i].getParticlesPerSec();
+					std::string emit_name("Rate " + std::to_string(i));
+					if (ImGui::DragFloat(emit_name.c_str(), &(emit_rates[i]), 2.0f, 0.0f, 10000.0f))
+					{
+						p_emitters[i].setParticlesPerSec(emit_rates[i]);
+					}
+				}
+			}
+
+			if (ImGui::CollapsingHeader("Forces"))
+			{
+				// Display modifiable data:
+				// For Gravity: position, force modifier
+				// For Wind: direction, force modifier
+			}
 		}
 		if(show_test_window)
 		{
