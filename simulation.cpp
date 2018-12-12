@@ -59,8 +59,6 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 {
 	bool show_test_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImColor(114, 114, 154);
 
 	const double display_time_interval = 1.0;
 	double prev_time = glfwGetTime();
@@ -81,43 +79,41 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 			ImGui::Text("Application average &.3f ms/frame (%.1f FPS)",
 				1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}*/
+
+		if (show_test_window)
+		{
+			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+			ImGui::ShowTestWindow(&show_test_window);
+		}
 		
 		{	// GUI code
 			if (ImGui::CollapsingHeader("Particle Emitters"))
 			{
-				std::vector<float> positions;
-				positions.resize(p_emitters.size() * 2);
-				std::vector<float> vel_modifiers;
-				vel_modifiers.resize(p_emitters.size());
-				std::vector<float> emit_rates;
-				emit_rates.resize(p_emitters.size());
 				for (int i = 0; i < p_emitters.size(); i++)
 				{
-					positions[2 * i] = p_emitters[i].getX();
-					positions[2 * i + 1] = p_emitters[i].getY();
-					ImGui::TextWrapped("Emitter %d", i);
-					std::string pos_name("Position " + std::to_string(i));
-					if (ImGui::DragFloat2(pos_name.c_str(), &(positions[2 * i]), 0.003, 0.0f, 1.0f))
+					ImGui::PushID(i);
+					float pos[2] = { p_emitters[i].getX(), p_emitters[i].getY() };
+					ImGui::Text("Emitter");
+					if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
 					{
-						p_emitters[i].setX(positions[2 * i]);
-						p_emitters[i].setY(positions[2 * i + 1]);
+						p_emitters[i].setX(pos[0]);
+						p_emitters[i].setY(pos[1]);
 					}
-					vel_modifiers[i] = p_emitters[i].getVelocityModifier();
-					std::string vel_name("Velocity " + std::to_string(i));
-					if (ImGui::DragFloat(vel_name.c_str(), &(vel_modifiers[i]), 0.0001, 0.0f, 1.0f))
+					float vel = p_emitters[i].getVelocityModifier();
+					if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
 					{
-						p_emitters[i].setVelocityModifier(vel_modifiers[i]);
+						p_emitters[i].setVelocityModifier(vel);
 					}
-					emit_rates[i] = p_emitters[i].getParticlesPerSec();
-					std::string emit_name("Rate " + std::to_string(i));
-					if (ImGui::DragFloat(emit_name.c_str(), &(emit_rates[i]), 2.0f, 0.0f, 10000.0f))
+					float emit_rate = p_emitters[i].getParticlesPerSec();
+					if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
 					{
-						p_emitters[i].setParticlesPerSec(emit_rates[i]);
+						p_emitters[i].setParticlesPerSec(emit_rate);
 					}
 					if (ImGui::Button("Delete"))
 					{
 						p_emitters.erase(p_emitters.begin() + i);
 					}
+					ImGui::PopID();
 				}
 				if (ImGui::Button("Add particle emitter"))
 				{
@@ -127,15 +123,89 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 			if (ImGui::CollapsingHeader("Forces"))
 			{
-				// Display modifiable data:
-				// For Gravity: position, force modifier
-				// For Wind: direction, force modifier
+				for (int i = 0; i < forces.size(); i++)
+				{
+					ImGui::PushID(i);
+					switch (forces[i]->getType())
+					{
+					case ForceType::GRAVITY: {
+						ImGui::Text("Gravity");
+						Gravity *gravity = reinterpret_cast<Gravity*>(forces[i]);
+						float pos[2] = { gravity->getCenterX(), gravity->getCenterY() };
+						if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
+						{
+							gravity->setCenterX(pos[0]);
+							gravity->setCenterY(pos[1]);
+						}
+						float radius = gravity->getRadius();
+						if (ImGui::DragFloat("Radius", &radius, 0.001f, 0.0f, 0.5f))
+						{
+							gravity->setRadius(radius);
+						}
+						float G = gravity->getG();
+						if (ImGui::DragFloat("G", &G, 0.0005f, 0.0f, 1.0f))
+						{
+							gravity->setG(G);
+						}
+					} break;
+					case ForceType::WIND: {
+						ImGui::Text("Wind");
+						Wind *wind = reinterpret_cast<Wind*>(forces[i]);
+						float dir[2] = { wind->getX(), wind->getY() };
+						if (ImGui::DragFloat2("Direction", dir, 0.001f, -1.0f, 1.0f))
+						{
+							wind->setX(dir[0]);
+							wind->setY(dir[1]);
+						}
+						float magnitude = wind->getMagnitude();
+						if (ImGui::DragFloat("Magnitude", &magnitude, 0.001, 0.0f, 1.0f))
+						{
+							wind->setMagnitude(magnitude);
+						}
+					} break;
+					}
+					if (ImGui::Button("Delete"))
+					{
+						forces.erase(forces.begin() + i);
+					}
+					ImGui::PopID();
+				}
+				static bool adding_force = false;
+				static ForceType type = ForceType::NONE;
+				if (!adding_force)
+				{
+					if (ImGui::Button("Add new force"))
+						adding_force = true;
+				}
+				else
+				{
+					if (type == ForceType::NONE)
+					{
+						if (ImGui::Button("Gravity"))
+							type = ForceType::GRAVITY;
+						if (ImGui::Button("Wind"))
+							type == ForceType::WIND;
+						if (ImGui::Button("Cancel"))
+						{
+							adding_force = false;
+						}
+					}
+					else if (type == ForceType::GRAVITY)
+					{
+						Gravity *gravity = new Gravity();
+						forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
+						adding_force = false;
+						type = ForceType::NONE;
+					}
+					else if (type == ForceType::WIND)
+					{
+						Wind *wind = new Wind();
+						forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
+						adding_force = false;
+						type = ForceType::NONE;
+					}
+				}
 			}
-		}
-		if(show_test_window)
-		{
-			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-			ImGui::ShowTestWindow(&show_test_window);
 		}
 		
 		double current_time = glfwGetTime();

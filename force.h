@@ -1,11 +1,22 @@
 #pragma once
 #include "particle.h"
 
+enum class ForceType
+{
+	NONE,
+	GRAVITY,
+	WIND
+};
+
 class ForceEmitter
 {
 public:
+	ForceEmitter(const ForceType type);
     virtual void update(const float delta_t) = 0;
     virtual void calcForce(float& x, float& y, Particle& p, const float delta_t) = 0;
+	ForceType getType() const;
+private:
+	ForceType type;
 };
 
 
@@ -23,6 +34,18 @@ public:
 
 	float getY() const;
 	void setY(const float y);
+
+	float getCenterX() const;
+	void setCenterX(const float a);
+
+	float getCenterY() const;
+	void setCenterY(const float a);
+
+	float getRadius() const;
+	void setRadius(const float a);
+
+	float getG() const;
+	void setG(const float a);
 
     __forceinline void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t)
     {
@@ -48,9 +71,9 @@ public:
 		out_y = f * f_dir_y * delta_t * modifier;        
     }
 private:
-    static constexpr float G = 0.6f;
+    float G;
     static constexpr float modifier = 0.01f;                
-	float x, y;		// Center of gravity
+	float x, y;
 	float orbit_center_x, orbit_center_y;
 	float orbit_radius;
 	float time;
@@ -70,10 +93,14 @@ public:
     float getY() const;
     void setY(const float v);
 
+	float getMagnitude() const;
+	void setMagnitude(const float a);
+
     void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t)
     {
 		out_x = x * magnitude;
 		out_y = y * magnitude;
+		time += delta_t;
     }
 private:
     float x, y;

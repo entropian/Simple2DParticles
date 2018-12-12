@@ -1,11 +1,20 @@
 #include "force.h"
 #include <cmath>
 
-Gravity::Gravity():orbit_center_x(0.5f), orbit_center_y(0.5f), orbit_radius(0.05f){}
+ForceEmitter::ForceEmitter(const ForceType type) :type(type) {}
+
+ForceType ForceEmitter::getType() const
+{
+	return type;
+}
+
+Gravity::Gravity()
+	:ForceEmitter(ForceType::GRAVITY), orbit_center_x(0.5f), orbit_center_y(0.5f), 
+	orbit_radius(0.05f), time(0.0f), G(0.6f){}
 
 Gravity::Gravity(const float ox, const float oy, const float radius)
-	:orbit_center_x(ox), orbit_center_y(oy), orbit_radius(radius),
-	time(0.0f) {}
+	:ForceEmitter(ForceType::GRAVITY), orbit_center_x(ox), orbit_center_y(oy), 
+	orbit_radius(radius), time(0.0f), G(0.6f) {}
 
 void Gravity::update(const float delta_t)
 {
@@ -31,9 +40,51 @@ void Gravity::setY(const float y)
 	this->y = y;
 }
 
-Wind::Wind():x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
+float Gravity::getCenterX() const
+{
+	return orbit_center_x;
+}
 
-Wind::Wind(const float x, const float y, const float mag):x(x), y(y), magnitude(mag), time(0.0f){}
+void Gravity::setCenterX(const float a)
+{
+	orbit_center_x = a;
+}
+
+float Gravity::getCenterY() const
+{
+	return orbit_center_y;
+}
+
+void Gravity::setCenterY(const float a)
+{
+	orbit_center_y = a;
+}
+
+float Gravity::getRadius() const
+{
+	return orbit_radius;
+}
+
+void Gravity::setRadius(const float a)
+{
+	orbit_radius = a;
+}
+
+float Gravity::getG() const
+{
+	return G;
+}
+
+void Gravity::setG(const float a)
+{
+	G = a;
+}
+
+Wind::Wind()
+	:ForceEmitter(ForceType::WIND), x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
+
+Wind::Wind(const float x, const float y, const float mag)
+	:ForceEmitter(ForceType::WIND), x(x), y(y), magnitude(mag), time(0.0f){}
 
 void Wind::update(const float delta_t)
 {
@@ -59,4 +110,14 @@ float Wind::getY() const
 void Wind::setY(const float v)
 {
     y = v;
+}
+
+float Wind::getMagnitude() const
+{
+	return magnitude;
+}
+
+void Wind::setMagnitude(const float a)
+{
+	magnitude = a;
 }
