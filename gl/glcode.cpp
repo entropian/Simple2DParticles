@@ -173,3 +173,8 @@ void Viewport::displayImage(const unsigned char* image, int width, int height)
 	ImGui::Render();
 	glfwSwapBuffers(window);
 }
+
+GLFWwindow* Viewport::getWindow()
+{
+	return window;
+}

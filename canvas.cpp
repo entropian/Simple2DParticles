@@ -50,8 +50,8 @@ void Canvas::drawParticle(const float x_norm, const float y_norm,
 	}
 	else if (point_size == 1)
 	{
-		float outer = 0.5f;
-		float inner = 0.8f;
+		auto outer = 0.5f;
+		auto inner = 0.8f;
 
 		drawPoint(buffer, x - 1, y - 1, r*outer, g*outer, b*outer);
 		drawPoint(buffer, x - 0, y - 1, r*inner, g*inner, b*inner);
@@ -115,21 +115,20 @@ void Canvas::fade(const float delta_t)
 		clearImageBuffer();
 		return;
 	}
-	const float fade_per_sec = 1.f / fade_time;
-	const float fade_val = fade_per_sec * delta_t;
+	const auto fade_per_sec = 1.f / fade_time;
+	const auto fade_val = fade_per_sec * delta_t;
 	for (int i = 0; i < num_pixels; i++)
 	{
-		unsigned char r, g, b;
-		r = image[i * 3];
-		g = image[i * 3 + 1];
-		b = image[i * 3 + 2];
+		auto r = image[i * 3];
+		auto g = image[i * 3 + 1];
+		auto b = image[i * 3 + 2];
 		if (r == g && g == b && b == 0)
 			continue;
 		float max_comp = std::max(r, std::max(g, b));
 		for (int j = 0; j < 3; j++)
 		{
-			float val = float(image[i * 3 + j]);
-			float scaling = val / max_comp;
+			auto val = float(image[i * 3 + j]);
+			auto scaling = val / max_comp;
 			unsigned char reduction = fade_val * 255.0f * scaling;
 			unsigned char final_val = image[i * 3 + j] - reduction;
 			if (final_val > image[i * 3 + j])

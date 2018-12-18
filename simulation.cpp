@@ -59,20 +59,18 @@ static const double display_time_interval = 1.0;
 void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 {
-	bool show_test_window = true;
-
-	const double display_time_interval = 1.0;
-	double prev_time = glfwGetTime();
-	double last_display_time = prev_time;
-	bool running = true;
+	const auto display_time_interval = 1.0;
+	auto prev_time = glfwGetTime();
+	auto last_display_time = prev_time;
+	auto running = true;
 
 	while (running)
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
 		ui->runInterface();
 
-		double current_time = glfwGetTime();
-		float delta_t = float(current_time - prev_time);
+		auto current_time = glfwGetTime();
+		auto delta_t = float(current_time - prev_time);
 		update(delta_t);
 		canvas->prepDrawing(delta_t);
 		draw(canvas);
@@ -89,11 +87,11 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 void Simulation::dampenParticle(Particle& p, const float delta_t)
 {
-    float px = p.getX();
-    float py = p.getY();
-    float vx = p.getVx();
-    float vy = p.getVy();
-    const float dampened = 1.0f - ((1.0f - damping) * delta_t);
+    auto px = p.getX();
+    auto py = p.getY();
+    auto vx = p.getVx();
+    auto vy = p.getVy();
+    const auto dampened = 1.0f - ((1.0f - damping) * delta_t);
     vx *= 1.0f - ((1.0f - damping) * delta_t);
     vy *= 1.0f - ((1.0f - damping) * delta_t);
     p.setVx(vx);
@@ -102,7 +100,7 @@ void Simulation::dampenParticle(Particle& p, const float delta_t)
 
 void Simulation::applyForces(Particle& p, const float delta_t)
 {
-    float force_x = 0.0f, force_y = 0.0f;
+    auto force_x = 0.0f, force_y = 0.0f;
 	for(auto& f : forces)
 	{
 		float fx, fy;
@@ -137,7 +135,6 @@ void Simulation::updateForces(const float delta_t)
 void Simulation::update(const float delta_t)
 {    
 	updateForces(delta_t);
-    std::vector<Particle>::iterator itr;
 	for(auto& p : particles)
     {
         dampenParticle(p, delta_t); // NOTE: moving this out of Gravity noticeably lowered FPS
@@ -187,12 +184,12 @@ void UserInterface::runInterface()
 				sim->p_emitters[i].setX(pos[0]);
 				sim->p_emitters[i].setY(pos[1]);
 			}
-			float vel = sim->p_emitters[i].getVelocityModifier();
+			auto vel = sim->p_emitters[i].getVelocityModifier();
 			if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
 			{
 				sim->p_emitters[i].setVelocityModifier(vel);
 			}
-			float emit_rate = sim->p_emitters[i].getParticlesPerSec();
+			auto emit_rate = sim->p_emitters[i].getParticlesPerSec();
 			if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
 			{
 				sim->p_emitters[i].setParticlesPerSec(emit_rate);
@@ -225,12 +222,12 @@ void UserInterface::runInterface()
 					gravity->setCenterX(pos[0]);
 					gravity->setCenterY(pos[1]);
 				}
-				float radius = gravity->getRadius();
+				auto radius = gravity->getRadius();
 				if (ImGui::DragFloat("Radius", &radius, 0.001f, 0.0f, 0.5f))
 				{
 					gravity->setRadius(radius);
 				}
-				float G = gravity->getG();
+				auto G = gravity->getG();
 				if (ImGui::DragFloat("G", &G, 0.0005f, 0.0f, 1.0f))
 				{
 					gravity->setG(G);
@@ -245,7 +242,7 @@ void UserInterface::runInterface()
 					wind->setX(dir[0]);
 					wind->setY(dir[1]);
 				}
-				float magnitude = wind->getMagnitude();
+				auto magnitude = wind->getMagnitude();
 				if (ImGui::DragFloat("Magnitude", &magnitude, 0.001, 0.0f, 1.0f))
 				{
 					wind->setMagnitude(magnitude);
