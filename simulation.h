@@ -5,11 +5,25 @@
 #include "particle_emitter.h"
 #include <boost/circular_buffer.hpp>
 
+class Simulation;
+
+class UserInterface
+{
+public:	
+	UserInterface(Simulation* sim);
+	void runInterface();
+private:
+	bool adding_force;
+	ForceType new_force_type;
+	Simulation *sim;
+};
+
 class Viewport;
 class Canvas;
 
 class Simulation
 {
+	friend class UserInterface;
 public:
     Simulation(const int num_particles, const float brightness_modifier);
     ~Simulation();
@@ -34,4 +48,5 @@ private:
 	ParticleEmitter p_emitter;
 	std::vector<ParticleEmitter> p_emitters;
     float damping;
+	UserInterface *ui;
 };

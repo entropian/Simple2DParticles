@@ -18,6 +18,7 @@
 Simulation::Simulation(const int max_particles, const float brightness_modifier)
     :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f), particles(max_particles)
 {
+	ui = new UserInterface(this);
  //   srand(0);
  //   std::vector<Particle>::iterator itr;
 	//for(auto& p : particles)
@@ -68,146 +69,8 @@ void Simulation::run(Canvas* canvas, Viewport* viewport)
 	while (running)
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
-		
-		/*{
-			auto f = 0.0f;
-			ImGui::Text("Hellow, world!");
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-			ImGui::ColorEdit3("clear color", (float*)&clear_color);
-			if (ImGui::Button("Test Window")) show_test_window ^= 1;
-			if (ImGui::Button("Another Window")) show_another_window ^= 1;
-			ImGui::Text("Application average &.3f ms/frame (%.1f FPS)",
-				1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		}*/
+		ui->runInterface();
 
-		if (show_test_window)
-		{
-			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-			ImGui::ShowTestWindow(&show_test_window);
-		}
-		
-		{	// GUI code
-			if (ImGui::CollapsingHeader("Particle Emitters"))
-			{
-				for (int i = 0; i < p_emitters.size(); i++)
-				{
-					ImGui::PushID(i);
-					float pos[2] = { p_emitters[i].getX(), p_emitters[i].getY() };
-					ImGui::Text("Emitter");
-					if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
-					{
-						p_emitters[i].setX(pos[0]);
-						p_emitters[i].setY(pos[1]);
-					}
-					float vel = p_emitters[i].getVelocityModifier();
-					if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
-					{
-						p_emitters[i].setVelocityModifier(vel);
-					}
-					float emit_rate = p_emitters[i].getParticlesPerSec();
-					if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
-					{
-						p_emitters[i].setParticlesPerSec(emit_rate);
-					}
-					if (ImGui::Button("Delete"))
-					{
-						p_emitters.erase(p_emitters.begin() + i);
-					}
-					ImGui::PopID();
-				}
-				if (ImGui::Button("Add particle emitter"))
-				{
-					p_emitters.push_back(ParticleEmitter());
-				}
-			}
-
-			if (ImGui::CollapsingHeader("Forces"))
-			{
-				for (int i = 0; i < forces.size(); i++)
-				{
-					ImGui::PushID(i);
-					switch (forces[i]->getType())
-					{
-					case ForceType::GRAVITY: {
-						ImGui::Text("Gravity");
-						Gravity *gravity = reinterpret_cast<Gravity*>(forces[i]);
-						float pos[2] = { gravity->getCenterX(), gravity->getCenterY() };
-						if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
-						{
-							gravity->setCenterX(pos[0]);
-							gravity->setCenterY(pos[1]);
-						}
-						float radius = gravity->getRadius();
-						if (ImGui::DragFloat("Radius", &radius, 0.001f, 0.0f, 0.5f))
-						{
-							gravity->setRadius(radius);
-						}
-						float G = gravity->getG();
-						if (ImGui::DragFloat("G", &G, 0.0005f, 0.0f, 1.0f))
-						{
-							gravity->setG(G);
-						}
-					} break;
-					case ForceType::WIND: {
-						ImGui::Text("Wind");
-						Wind *wind = reinterpret_cast<Wind*>(forces[i]);
-						float dir[2] = { wind->getX(), wind->getY() };
-						if (ImGui::DragFloat2("Direction", dir, 0.001f, -1.0f, 1.0f))
-						{
-							wind->setX(dir[0]);
-							wind->setY(dir[1]);
-						}
-						float magnitude = wind->getMagnitude();
-						if (ImGui::DragFloat("Magnitude", &magnitude, 0.001, 0.0f, 1.0f))
-						{
-							wind->setMagnitude(magnitude);
-						}
-					} break;
-					}
-					if (ImGui::Button("Delete"))
-					{
-						forces.erase(forces.begin() + i);
-					}
-					ImGui::PopID();
-				}
-				static bool adding_force = false;
-				static ForceType type = ForceType::NONE;
-				if (!adding_force)
-				{
-					if (ImGui::Button("Add new force"))
-						adding_force = true;
-				}
-				else
-				{
-					if (type == ForceType::NONE)
-					{
-						if (ImGui::Button("Gravity"))
-							type = ForceType::GRAVITY;
-						if (ImGui::Button("Wind"))
-							type == ForceType::WIND;
-						if (ImGui::Button("Cancel"))
-						{
-							adding_force = false;
-						}
-					}
-					else if (type == ForceType::GRAVITY)
-					{
-						Gravity *gravity = new Gravity();
-						forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
-						adding_force = false;
-						type = ForceType::NONE;
-					}
-					else if (type == ForceType::WIND)
-					{
-						Wind *wind = new Wind();
-						forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
-						adding_force = false;
-						type = ForceType::NONE;
-					}
-				}
-			}
-		}
-		
 		double current_time = glfwGetTime();
 		float delta_t = float(current_time - prev_time);
 		update(delta_t);
@@ -302,4 +165,132 @@ void Simulation::draw(Canvas* canvas)
 			clamp(1.0f - sqrtf(p.getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);
     }
 	canvas->calcImage();
+}
+
+
+UserInterface::UserInterface(Simulation* sim)
+	:adding_force(false), new_force_type(ForceType::NONE), sim(sim)
+{}
+
+void UserInterface::runInterface()
+{
+	// GUI code
+	if (ImGui::CollapsingHeader("Particle Emitters"))
+	{
+		for (int i = 0; i < sim->p_emitters.size(); i++)
+		{
+			ImGui::PushID(i);
+			float pos[2] = { sim->p_emitters[i].getX(), sim->p_emitters[i].getY() };
+			ImGui::Text("Emitter");
+			if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
+			{
+				sim->p_emitters[i].setX(pos[0]);
+				sim->p_emitters[i].setY(pos[1]);
+			}
+			float vel = sim->p_emitters[i].getVelocityModifier();
+			if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
+			{
+				sim->p_emitters[i].setVelocityModifier(vel);
+			}
+			float emit_rate = sim->p_emitters[i].getParticlesPerSec();
+			if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
+			{
+				sim->p_emitters[i].setParticlesPerSec(emit_rate);
+			}
+			if (ImGui::Button("Delete"))
+			{
+				sim->p_emitters.erase(sim->p_emitters.begin() + i);
+			}
+			ImGui::PopID();
+		}
+		if (ImGui::Button("Add particle emitter"))
+		{
+			sim->p_emitters.push_back(ParticleEmitter());
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Forces"))
+	{
+		for (int i = 0; i < sim->forces.size(); i++)
+		{
+			ImGui::PushID(i);
+			switch (sim->forces[i]->getType())
+			{
+			case ForceType::GRAVITY: {
+				ImGui::Text("Gravity");
+				Gravity *gravity = reinterpret_cast<Gravity*>(sim->forces[i]);
+				float pos[2] = { gravity->getCenterX(), gravity->getCenterY() };
+				if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
+				{
+					gravity->setCenterX(pos[0]);
+					gravity->setCenterY(pos[1]);
+				}
+				float radius = gravity->getRadius();
+				if (ImGui::DragFloat("Radius", &radius, 0.001f, 0.0f, 0.5f))
+				{
+					gravity->setRadius(radius);
+				}
+				float G = gravity->getG();
+				if (ImGui::DragFloat("G", &G, 0.0005f, 0.0f, 1.0f))
+				{
+					gravity->setG(G);
+				}
+			} break;
+			case ForceType::WIND: {
+				ImGui::Text("Wind");
+				Wind *wind = reinterpret_cast<Wind*>(sim->forces[i]);
+				float dir[2] = { wind->getX(), wind->getY() };
+				if (ImGui::DragFloat2("Direction", dir, 0.001f, -1.0f, 1.0f))
+				{
+					wind->setX(dir[0]);
+					wind->setY(dir[1]);
+				}
+				float magnitude = wind->getMagnitude();
+				if (ImGui::DragFloat("Magnitude", &magnitude, 0.001, 0.0f, 1.0f))
+				{
+					wind->setMagnitude(magnitude);
+				}
+			} break;
+			}
+			if (ImGui::Button("Delete"))
+			{
+				sim->forces.erase(sim->forces.begin() + i);
+			}
+			ImGui::PopID();
+		}
+
+		if (!adding_force)
+		{
+			if (ImGui::Button("Add new force"))
+				adding_force = true;
+		}
+		else
+		{
+			if (new_force_type == ForceType::NONE)
+			{
+				if (ImGui::Button("Gravity"))
+					new_force_type = ForceType::GRAVITY;
+				if (ImGui::Button("Wind"))
+					new_force_type == ForceType::WIND;
+				if (ImGui::Button("Cancel"))
+				{
+					adding_force = false;
+				}
+			}
+			else if (new_force_type == ForceType::GRAVITY)
+			{
+				Gravity *gravity = new Gravity();
+				sim->forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
+				adding_force = false;
+				new_force_type = ForceType::NONE;
+			}
+			else if (new_force_type == ForceType::WIND)
+			{
+				Wind *wind = new Wind();
+				sim->forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
+				adding_force = false;
+				new_force_type = ForceType::NONE;
+			}
+		}
+	}
 }
