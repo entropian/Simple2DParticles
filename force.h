@@ -11,12 +11,9 @@ enum class ForceType
 class ForceEmitter
 {
 public:
-	ForceEmitter(const ForceType type);
     virtual void update(const float delta_t) = 0;
     virtual void calcForce(float& x, float& y, Particle& p, const float delta_t) = 0;
-	ForceType getType() const;
-private:
-	ForceType type;
+	virtual ForceType getType() const = 0;
 };
 
 
@@ -26,8 +23,6 @@ public:
     Gravity();
 	Gravity(const float orbit_center_x, const float orbit_center_y,
 		const float orbit_radius = 0.05f);
-	
-	void update(const float delta_t);
 
 	float getX() const;
 	void setX(const float x);
@@ -47,7 +42,10 @@ public:
 	float getG() const;
 	void setG(const float a);
 
-    __forceinline void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t)
+	void update(const float delta_t) override;
+	ForceType getType() const override;
+
+    __forceinline void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t) override
     {
 		auto px = p.getX();
 		auto py = p.getY();
@@ -85,7 +83,6 @@ class Wind : ForceEmitter
 public:
     Wind();
     Wind(const float x, const float y, const float mag);
-    void update(const float delta_t);
 
     float getX() const;
     void setX(const float v);
@@ -96,7 +93,10 @@ public:
 	float getMagnitude() const;
 	void setMagnitude(const float a);
 
-    void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t)
+	void update(const float delta_t) override;
+	ForceType getType() const override;
+
+    void calcForce(float& out_x, float& out_y, Particle& p, const float delta_t) override
     {
 		out_x = x * magnitude;
 		out_y = y * magnitude;

@@ -1,19 +1,12 @@
 #include "force.h"
 #include <cmath>
 
-ForceEmitter::ForceEmitter(const ForceType type) :type(type) {}
-
-ForceType ForceEmitter::getType() const
-{
-	return type;
-}
-
 Gravity::Gravity()
-	:ForceEmitter(ForceType::GRAVITY), orbit_center_x(0.5f), orbit_center_y(0.5f), 
+	:orbit_center_x(0.5f), orbit_center_y(0.5f), 
 	orbit_radius(0.05f), time(0.0f), G(0.6f){}
 
 Gravity::Gravity(const float ox, const float oy, const float radius)
-	:ForceEmitter(ForceType::GRAVITY), orbit_center_x(ox), orbit_center_y(oy), 
+	:orbit_center_x(ox), orbit_center_y(oy), 
 	orbit_radius(radius), time(0.0f), G(0.6f) {}
 
 void Gravity::update(const float delta_t)
@@ -21,6 +14,11 @@ void Gravity::update(const float delta_t)
 	x = cosf(time) * orbit_radius + orbit_center_x;
 	y = sinf(time) * orbit_radius + orbit_center_y;
 	time += delta_t;
+}
+
+ForceType Gravity::getType() const
+{
+	return ForceType::GRAVITY;
 }
 
 float Gravity::getX() const
@@ -81,15 +79,20 @@ void Gravity::setG(const float a)
 }
 
 Wind::Wind()
-	:ForceEmitter(ForceType::WIND), x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
+	:x(0.0f), y(0.0f), magnitude(0.0f), time(0.0f){}
 
 Wind::Wind(const float x, const float y, const float mag)
-	:ForceEmitter(ForceType::WIND), x(x), y(y), magnitude(mag), time(0.0f){}
+	:x(x), y(y), magnitude(mag), time(0.0f){}
 
 void Wind::update(const float delta_t)
 {
     // TODO: add something
     time += delta_t;
+}
+
+ForceType Wind::getType() const
+{
+	return ForceType::WIND;
 }
 
 float Wind::getX() const
