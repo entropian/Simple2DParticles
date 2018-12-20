@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	{
 		num_particles = atoi(argv[1]);
 	}
-	auto height = 1080, width = int(float(height) * 1.25f);
+	constexpr auto height = 1080, width = int(float(height) * 1.25f);
 	Viewport viewport(width, height);
 	Canvas canvas(height, height, 0, 0.0f); // Square canvas
 	auto brightness_modifier = calcBrightnessModifier(70000, height, height);

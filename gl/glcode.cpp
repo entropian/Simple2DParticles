@@ -10,6 +10,11 @@ struct GlViewport
 	GLuint vao, vbo, textureHandle, shaderProgram;
 };
 
+void GlViewportDeleter::operator()(GlViewport *v)
+{
+	delete v;
+}
+
 // Compile the shaders and link the program
 void readAndCompileShaders(const char *vs, const char *fs, GLuint *shaderProgram)
 {
@@ -69,7 +74,7 @@ Viewport::Viewport(const int width, const int height)
 	{
 		fprintf(stderr, "Failed to initialize GLFW\n");
 	}
-	viewport = new GlViewport;
+	viewport.reset(new GlViewport);
 	initWindow(width, height);
 	if (window)
 	{
@@ -80,7 +85,7 @@ Viewport::Viewport(const int width, const int height)
 
 void Viewport::initViewport(const float aspect_ratio)
 {
-	viewport = new GlViewport;
+	viewport.reset(new GlViewport);
 	readAndCompileShaders(basicVertSrc, basicFragSrc, &(viewport->shaderProgram));
 	glUseProgram(viewport->shaderProgram);
 
@@ -151,9 +156,9 @@ void Viewport::initWindow(const int width, const int height)
 
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	window = glfwCreateWindow(width, height, "CRaytracer", NULL, NULL);
-	glfwSetWindowPos(window, 600, 100);
-	glfwMakeContextCurrent(window);
+	window.reset(glfwCreateWindow(width, height, "Particles", NULL, NULL));
+	glfwSetWindowPos(window.get(), 600, 100);
+	glfwMakeContextCurrent(window.get());
 
 	// Init GLEW
 	glewExperimental = GL_TRUE;
@@ -171,10 +176,15 @@ void Viewport::displayImage(const unsigned char* image, int width, int height)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	ImGui::Render();
-	glfwSwapBuffers(window);
+	glfwSwapBuffers(window.get());
 }
 
 GLFWwindow* Viewport::getWindow()
 {
-	return window;
+	return window.get();
+}
+
+void GLFWwindowDeleter::operator()(GLFWwindow *w)
+{
+	delete w;
 }

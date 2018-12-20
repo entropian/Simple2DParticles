@@ -18,7 +18,7 @@
 Simulation::Simulation(const int max_particles, const float brightness_modifier)
     :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f), particles(max_particles)
 {
-	ui = new UserInterface(this);
+	ui.reset(new UserInterface(this));
  //   srand(0);
  //   std::vector<Particle>::iterator itr;
 	//for(auto& p : particles)
@@ -38,14 +38,14 @@ void Simulation::addForceGravity(Gravity& g)
 {
     Gravity* gravity = new Gravity();
     *gravity = g;
-    forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
+    forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(gravity)));
 }
 
 void Simulation::addForceWind(Wind& w)
 {
     Wind* wind = new Wind();
     *wind = w;
-    forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
+	forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(wind)));
 }
 
 void Simulation::addParticleEmitter(const float x, const float y, const float p_per_sec,
@@ -59,7 +59,7 @@ static const double display_time_interval = 1.0;
 void Simulation::run(Canvas* canvas, Viewport* viewport)
 
 {
-	const auto display_time_interval = 1.0;
+	auto display_time_interval = 1.0;
 	auto prev_time = glfwGetTime();
 	auto last_display_time = prev_time;
 	auto running = true;
@@ -215,7 +215,7 @@ void UserInterface::runInterface()
 			{
 			case ForceType::GRAVITY: {
 				ImGui::Text("Gravity");
-				Gravity *gravity = reinterpret_cast<Gravity*>(sim->forces[i]);
+				Gravity *gravity = reinterpret_cast<Gravity*>(sim->forces[i].get());
 				float pos[2] = { gravity->getCenterX(), gravity->getCenterY() };
 				if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
 				{
@@ -235,7 +235,7 @@ void UserInterface::runInterface()
 			} break;
 			case ForceType::WIND: {
 				ImGui::Text("Wind");
-				Wind *wind = reinterpret_cast<Wind*>(sim->forces[i]);
+				Wind *wind = reinterpret_cast<Wind*>(sim->forces[i].get());
 				float dir[2] = { wind->getX(), wind->getY() };
 				if (ImGui::DragFloat2("Direction", dir, 0.001f, -1.0f, 1.0f))
 				{
@@ -277,14 +277,14 @@ void UserInterface::runInterface()
 			else if (new_force_type == ForceType::GRAVITY)
 			{
 				Gravity *gravity = new Gravity();
-				sim->forces.push_back(reinterpret_cast<ForceEmitter*>(gravity));
+				sim->forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(gravity)));
 				adding_force = false;
 				new_force_type = ForceType::NONE;
 			}
 			else if (new_force_type == ForceType::WIND)
 			{
 				Wind *wind = new Wind();
-				sim->forces.push_back(reinterpret_cast<ForceEmitter*>(wind));
+				sim->forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(wind)));
 				adding_force = false;
 				new_force_type = ForceType::NONE;
 			}

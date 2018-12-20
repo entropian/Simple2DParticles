@@ -43,10 +43,10 @@ private:
 	void emitParticles(const float delta_t);
 
 	boost::circular_buffer<Particle> particles;
-	std::vector<ForceEmitter*> forces;
+	std::vector<std::unique_ptr<ForceEmitter>> forces;
     float brightness_modifier;
 	ParticleEmitter p_emitter;
 	std::vector<ParticleEmitter> p_emitters;
     float damping;
-	UserInterface *ui;
+	std::unique_ptr<UserInterface> ui;
 };
