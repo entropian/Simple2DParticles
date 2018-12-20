@@ -1,9 +1,11 @@
 #include "glcode.h"
 #include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_glfw_gl3.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "glshaders.h"
 #include <cstdio>
+
 
 struct GlViewport
 {
@@ -80,7 +82,14 @@ Viewport::Viewport(const int width, const int height)
 	{
 		initViewport(float(width) / float(height));
 		//glfwSetMouseButtonCallback(window, mouseButtonCallback);
+		ImGui_ImplGlfwGL3_Init(window.get(), true);
 	}
+}
+
+Viewport::~Viewport()
+{
+	ImGui_ImplGlfwGL3_Shutdown();
+	glfwTerminate();
 }
 
 void Viewport::initViewport(const float aspect_ratio)

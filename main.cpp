@@ -36,10 +36,6 @@ int main(int argc, char* argv[])
 	sim.addParticleEmitter(0.15f, 0.15f, 1000.0f, 0.05f);
 	sim.addParticleEmitter(0.15, 0.75f, 500.0f, 0.05f);
 
-	ImGui_ImplGlfwGL3_Init(viewport.getWindow(), true);
-
 	sim.run(&canvas, &viewport);
-
-	ImGui_ImplGlfwGL3_Shutdown();
     return 0;
 }
