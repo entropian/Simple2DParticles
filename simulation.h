@@ -10,12 +10,12 @@ class Simulation;
 class UserInterface
 {
 public:	
-	UserInterface(Simulation* sim);
+	UserInterface(Simulation& sim);
 	void runInterface();
 private:
 	bool adding_force;
 	ForceType new_force_type;
-	Simulation *sim;
+	Simulation &sim;
 };
 
 class Viewport;
@@ -26,7 +26,6 @@ class Simulation
 	friend class UserInterface;
 public:
     Simulation(const int num_particles, const float brightness_modifier);
-    ~Simulation();
 
 	void run(Canvas* canvas, Viewport* viewport);
 

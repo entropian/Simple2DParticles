@@ -10,6 +10,13 @@
 struct GlViewport
 {
 	GLuint vao, vbo, textureHandle, shaderProgram;
+	~GlViewport()
+	{
+		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &vao);
+		glDeleteTextures(1, &textureHandle);
+		glDeleteProgram(shaderProgram);
+	}
 };
 
 void GlViewportDeleter::operator()(GlViewport *v)

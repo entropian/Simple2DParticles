@@ -18,7 +18,7 @@
 Simulation::Simulation(const int max_particles, const float brightness_modifier)
     :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f), particles(max_particles)
 {
-	ui.reset(new UserInterface(this));
+	ui.reset(new UserInterface(*this));
  //   srand(0);
  //   std::vector<Particle>::iterator itr;
 	//for(auto& p : particles)
@@ -27,11 +27,6 @@ Simulation::Simulation(const int max_particles, const float brightness_modifier)
 	//	float y = float(rand()) / float(RAND_MAX);
 	//	particles.push_back(p);
  //   }
-}
-
-Simulation::~Simulation()
-{
-
 }
 
 void Simulation::addForceGravity(Gravity& g)
@@ -165,7 +160,7 @@ void Simulation::draw(Canvas* canvas)
 }
 
 
-UserInterface::UserInterface(Simulation* sim)
+UserInterface::UserInterface(Simulation &sim)
 	:adding_force(false), new_force_type(ForceType::NONE), sim(sim)
 {}
 
@@ -174,48 +169,48 @@ void UserInterface::runInterface()
 	// GUI code
 	if (ImGui::CollapsingHeader("Particle Emitters"))
 	{
-		for (int i = 0; i < sim->p_emitters.size(); i++)
+		for (int i = 0; i < sim.p_emitters.size(); i++)
 		{
 			ImGui::PushID(i);
-			float pos[2] = { sim->p_emitters[i].getX(), sim->p_emitters[i].getY() };
+			float pos[2] = { sim.p_emitters[i].getX(), sim.p_emitters[i].getY() };
 			ImGui::Text("Emitter");
 			if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
 			{
-				sim->p_emitters[i].setX(pos[0]);
-				sim->p_emitters[i].setY(pos[1]);
+				sim.p_emitters[i].setX(pos[0]);
+				sim.p_emitters[i].setY(pos[1]);
 			}
-			auto vel = sim->p_emitters[i].getVelocityModifier();
+			auto vel = sim.p_emitters[i].getVelocityModifier();
 			if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
 			{
-				sim->p_emitters[i].setVelocityModifier(vel);
+				sim.p_emitters[i].setVelocityModifier(vel);
 			}
-			auto emit_rate = sim->p_emitters[i].getParticlesPerSec();
+			auto emit_rate = sim.p_emitters[i].getParticlesPerSec();
 			if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
 			{
-				sim->p_emitters[i].setParticlesPerSec(emit_rate);
+				sim.p_emitters[i].setParticlesPerSec(emit_rate);
 			}
 			if (ImGui::Button("Delete"))
 			{
-				sim->p_emitters.erase(sim->p_emitters.begin() + i);
+				sim.p_emitters.erase(sim.p_emitters.begin() + i);
 			}
 			ImGui::PopID();
 		}
 		if (ImGui::Button("Add particle emitter"))
 		{
-			sim->p_emitters.push_back(ParticleEmitter());
+			sim.p_emitters.push_back(ParticleEmitter());
 		}
 	}
 
 	if (ImGui::CollapsingHeader("Forces"))
 	{
-		for (int i = 0; i < sim->forces.size(); i++)
+		for (int i = 0; i < sim.forces.size(); i++)
 		{
 			ImGui::PushID(i);
-			switch (sim->forces[i]->getType())
+			switch (sim.forces[i]->getType())
 			{
 			case ForceType::GRAVITY: {
 				ImGui::Text("Gravity");
-				Gravity *gravity = reinterpret_cast<Gravity*>(sim->forces[i].get());
+				Gravity *gravity = reinterpret_cast<Gravity*>(sim.forces[i].get());
 				float pos[2] = { gravity->getCenterX(), gravity->getCenterY() };
 				if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
 				{
@@ -235,7 +230,7 @@ void UserInterface::runInterface()
 			} break;
 			case ForceType::WIND: {
 				ImGui::Text("Wind");
-				Wind *wind = reinterpret_cast<Wind*>(sim->forces[i].get());
+				Wind *wind = reinterpret_cast<Wind*>(sim.forces[i].get());
 				float dir[2] = { wind->getX(), wind->getY() };
 				if (ImGui::DragFloat2("Direction", dir, 0.001f, -1.0f, 1.0f))
 				{
@@ -251,7 +246,7 @@ void UserInterface::runInterface()
 			}
 			if (ImGui::Button("Delete"))
 			{
-				sim->forces.erase(sim->forces.begin() + i);
+				sim.forces.erase(sim.forces.begin() + i);
 			}
 			ImGui::PopID();
 		}
@@ -277,14 +272,14 @@ void UserInterface::runInterface()
 			else if (new_force_type == ForceType::GRAVITY)
 			{
 				Gravity *gravity = new Gravity();
-				sim->forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(gravity)));
+				sim.forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(gravity)));
 				adding_force = false;
 				new_force_type = ForceType::NONE;
 			}
 			else if (new_force_type == ForceType::WIND)
 			{
 				Wind *wind = new Wind();
-				sim->forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(wind)));
+				sim.forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(wind)));
 				adding_force = false;
 				new_force_type = ForceType::NONE;
 			}

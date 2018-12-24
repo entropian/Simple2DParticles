@@ -1,6 +1,6 @@
 TODO:
 Take aspect ratio into account
-Add changeable force
+copy constructors?
 Custom functions for color calculations
 Fade color isn't correct
 -types: gravity, downward gravity, vortex, wind, harmonic 
