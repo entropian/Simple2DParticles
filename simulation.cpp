@@ -16,9 +16,10 @@
 
 
 Simulation::Simulation(const int max_particles, const float brightness_modifier)
-    :brightness_modifier(brightness_modifier), p_emitter(), damping(0.8f), particles(max_particles)
+    :brightness_modifier(brightness_modifier), damping(0.8f), particles(max_particles)
 {
 	ui.reset(new UserInterface(*this));
+	p_color_calc.reset(reinterpret_cast<ParticleColorCalculator*>(new ForceColor(brightness_modifier)));
  //   srand(0);
  //   std::vector<Particle>::iterator itr;
 	//for(auto& p : particles)
@@ -142,19 +143,15 @@ void Simulation::update(const float delta_t)
 
 void Simulation::draw(Canvas* canvas)
 {
-    std::vector<Particle>::iterator itr;
 	for(auto& p : particles)
     {  
-		/*
-        canvas->drawParticle(p.getX(), p.getY(),
-                         clamp(0.1 / p.getDistToCOG(), 0.0f, 0.8f) * brightness_modifier,
-                         0.5f * brightness_modifier,
-                         clamp((1.0 - 0.1 / p.getDistToCOG()), 0.0f, 1.0f) * brightness_modifier);
-						 */
-		canvas->drawParticle(p.getX(), p.getY(),
+		/*canvas->drawParticle(p.getX(), p.getY(),
 			clamp(sqrtf(p.getForceMag()) * 40.0f, 0.0f, 1.0f) * brightness_modifier,
 			0.5f * brightness_modifier,
-			clamp(1.0f - sqrtf(p.getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);
+			clamp(1.0f - sqrtf(p.getForceMag()) * 40.0f, 0.0f, 0.8f) * brightness_modifier);*/
+		float r, g, b;
+		p_color_calc->calcColor(r, g, b, p);
+		canvas->drawParticle(p.getX(), p.getY(), r, g, b);
     }
 	canvas->calcImage();
 }

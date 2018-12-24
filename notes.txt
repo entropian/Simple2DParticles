@@ -1,6 +1,5 @@
 TODO:
 Take aspect ratio into account
-copy constructors?
-Custom functions for color calculations
+Use Strategy pattern for color calculations
 Fade color isn't correct
 -types: gravity, downward gravity, vortex, wind, harmonic 

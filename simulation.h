@@ -4,6 +4,7 @@
 #include "force.h"
 #include "particle_emitter.h"
 #include <boost/circular_buffer.hpp>
+#include "particle_color.h"
 
 class Simulation;
 
@@ -44,8 +45,8 @@ private:
 	boost::circular_buffer<Particle> particles;
 	std::vector<std::unique_ptr<ForceEmitter>> forces;
     float brightness_modifier;
-	ParticleEmitter p_emitter;
 	std::vector<ParticleEmitter> p_emitters;
+	std::unique_ptr<ParticleColorCalculator> p_color_calc;
     float damping;
 	std::unique_ptr<UserInterface> ui;
 };

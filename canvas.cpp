@@ -32,7 +32,6 @@ unsigned int Canvas::getPointSize() const
     return point_size;
 }
 void Canvas::drawParticle(const float x_norm, const float y_norm,
-
 	const float r, const float g, const float b)
 {
     int x = x_norm * width;
