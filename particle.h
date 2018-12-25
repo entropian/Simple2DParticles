@@ -66,6 +66,11 @@ public:
 		return vy;
 	}
 
+	__forceinline float getVelMag() const
+	{
+		return sqrtf(vx * vx + vy * vy);
+	}
+
 	__forceinline float getForceMag() const
 	{
 		return force_magnitude;

@@ -19,7 +19,9 @@ Simulation::Simulation(const int max_particles, const float brightness_modifier)
     :brightness_modifier(brightness_modifier), damping(0.8f), particles(max_particles)
 {
 	ui.reset(new UserInterface(*this));
-	p_color_calc.reset(reinterpret_cast<ParticleColorCalculator*>(new ForceColor(brightness_modifier)));
+	//p_color_calc.reset(reinterpret_cast<ParticleColorCalculator*>(new ForceColor(brightness_modifier)));
+	p_color_calc.reset(reinterpret_cast<ParticleColorCalculator*>(new VelocityColor(brightness_modifier)));
+
  //   srand(0);
  //   std::vector<Particle>::iterator itr;
 	//for(auto& p : particles)
