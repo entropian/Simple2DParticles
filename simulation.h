@@ -32,8 +32,9 @@ public:
 
     void addForceGravity(Gravity& gravity);    
     void addForceWind(Wind& wind);
-	void addParticleEmitter(const float x, const float y, const float p_per_sec,
-		const float vel_modifier);
+	//void addParticleEmitter(const float x, const float y, const float p_per_sec,
+	//	const float vel_modifier);
+	void addParticleEmitter(ParticleEmitter*);
 private:
 	void update(const float delta_t);
 	void draw(Canvas* canvas);
@@ -45,7 +46,8 @@ private:
 	boost::circular_buffer<Particle> particles;
 	std::vector<std::unique_ptr<ForceEmitter>> forces;
     float brightness_modifier;
-	std::vector<ParticleEmitter> p_emitters;
+	//std::vector<ParticleEmitter> p_emitters;
+	std::vector<std::unique_ptr<ParticleEmitter>> p_emitters;
 	std::unique_ptr<ParticleColorCalculator> p_color_calc;
     float damping;
 	std::unique_ptr<UserInterface> ui;

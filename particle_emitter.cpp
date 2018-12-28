@@ -1,12 +1,18 @@
 #include "particle_emitter.h"
-ParticleEmitter::ParticleEmitter()
+
+ParticleEmitterType ParticleEmitter::getType() const
+{
+	return ParticleEmitterType::NONE;
+}
+
+StreamEmitter::StreamEmitter()
 	:x(0.00001f), y(0.00001f), p_per_sec(0.0f), vel_modifier(0.0f) {}
-ParticleEmitter::ParticleEmitter(const float x, const float y, const float p_per_sec,
+StreamEmitter::StreamEmitter(const float x, const float y, const float p_per_sec,
 	const float vel_modifier)
 	:x(x), y(y), p_per_sec(p_per_sec), vel_modifier(vel_modifier) {}
 
 
-void ParticleEmitter::emit(std::vector<Particle>& output, const float delta_t)
+void StreamEmitter::emit(std::vector<Particle>& output, const float delta_t)
 {
 	auto ratio = delta_t * p_per_sec;
 	auto output_size = int(delta_t * p_per_sec);
@@ -25,42 +31,47 @@ void ParticleEmitter::emit(std::vector<Particle>& output, const float delta_t)
 	}
 }
 
-float ParticleEmitter::getX() const
+ParticleEmitterType StreamEmitter::getType() const
+{
+	return ParticleEmitterType::STREAM;
+}
+
+float StreamEmitter::getX() const
 {
 	return x;
 }
 
-void ParticleEmitter::setX(const float a)
+void StreamEmitter::setX(const float a)
 {
 	x = a;
 }
 
-float ParticleEmitter::getY() const
+float StreamEmitter::getY() const
 {
 	return y;
 }
 
-void ParticleEmitter::setY(const float a)
+void StreamEmitter::setY(const float a)
 {
 	y = a;
 }
 
-float ParticleEmitter::getParticlesPerSec() const
+float StreamEmitter::getParticlesPerSec() const
 {
 	return p_per_sec;
 }
 
-void ParticleEmitter::setParticlesPerSec(const float a)
+void StreamEmitter::setParticlesPerSec(const float a)
 {
 	p_per_sec = a;
 }
 
-float ParticleEmitter::getVelocityModifier() const
+float StreamEmitter::getVelocityModifier() const
 {
 	return vel_modifier;
 }
 
-void ParticleEmitter::setVelocityModifier(const float a)
+void StreamEmitter::setVelocityModifier(const float a)
 {
 	vel_modifier = a;
 }

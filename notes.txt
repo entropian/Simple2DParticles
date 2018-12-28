@@ -1,4 +1,5 @@
 TODO:
+Study abstract factory and implemented it for adding particle emitters
 Take aspect ratio into account
 Use Strategy pattern for color calculations
 Fade color isn't correct

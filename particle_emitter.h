@@ -2,13 +2,28 @@
 #include "particle.h"
 #include <vector>
 
+enum class ParticleEmitterType
+{
+	NONE,
+	STREAM,
+	BURST
+};
+
 class ParticleEmitter
 {
 public:
-	ParticleEmitter();
-	ParticleEmitter(const float x, const float y, const float p_per_sec,
+	virtual void emit(std::vector<Particle> &output, const float delta_t) = 0;
+	virtual ParticleEmitterType getType() const;
+};
+
+class StreamEmitter : public ParticleEmitter
+{
+public:
+	StreamEmitter();
+	StreamEmitter(const float x, const float y, const float p_per_sec,
 		const float vel_modifier);
-	void emit(std::vector<Particle>& output, const float delta_t);
+	void emit(std::vector<Particle>& output, const float delta_t) override;
+	ParticleEmitterType getType() const override;
 
 	float getX() const;
 	void setX(const float a);

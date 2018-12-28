@@ -46,10 +46,12 @@ void Simulation::addForceWind(Wind& w)
 	forces.push_back(std::unique_ptr<ForceEmitter>(reinterpret_cast<ForceEmitter*>(wind)));
 }
 
-void Simulation::addParticleEmitter(const float x, const float y, const float p_per_sec,
-	const float vel_modifier)
+void Simulation::addParticleEmitter(ParticleEmitter *pe)
 {
-	p_emitters.push_back(ParticleEmitter(x, y, p_per_sec, vel_modifier));
+	ParticleEmitter* new_pe = reinterpret_cast<ParticleEmitter*>(pe);
+	std::unique_ptr<ParticleEmitter> temp(new_pe);
+	// NOTE: when passing unique_ptr as argument (by value?), use rvalue
+	p_emitters.push_back(std::move(temp));
 }
 
 static const double display_time_interval = 1.0;
@@ -117,7 +119,7 @@ void Simulation::emitParticles(const float delta_t)
 	for (auto &pe : p_emitters)
 	{
 		std::vector<Particle> new_particles;
-		pe.emit(new_particles, delta_t);
+		pe->emit(new_particles, delta_t);
 		particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 	}
 }
@@ -171,32 +173,38 @@ void UserInterface::runInterface()
 		for (int i = 0; i < sim.p_emitters.size(); i++)
 		{
 			ImGui::PushID(i);
-			float pos[2] = { sim.p_emitters[i].getX(), sim.p_emitters[i].getY() };
-			ImGui::Text("Emitter");
-			if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
+			ParticleEmitterType type = sim.p_emitters[i]->getType();
+			if (type == ParticleEmitterType::STREAM)
 			{
-				sim.p_emitters[i].setX(pos[0]);
-				sim.p_emitters[i].setY(pos[1]);
-			}
-			auto vel = sim.p_emitters[i].getVelocityModifier();
-			if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
-			{
-				sim.p_emitters[i].setVelocityModifier(vel);
-			}
-			auto emit_rate = sim.p_emitters[i].getParticlesPerSec();
-			if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
-			{
-				sim.p_emitters[i].setParticlesPerSec(emit_rate);
-			}
-			if (ImGui::Button("Delete"))
-			{
-				sim.p_emitters.erase(sim.p_emitters.begin() + i);
+				StreamEmitter *se_ptr = reinterpret_cast<StreamEmitter*>(sim.p_emitters[i].get());
+				float pos[2] = { se_ptr->getX(), se_ptr->getY() };
+				ImGui::Text("Emitter");
+				if (ImGui::DragFloat2("Position", pos, 0.003, 0.0f, 1.0f))
+				{
+					se_ptr->setX(pos[0]);
+					se_ptr->setY(pos[1]);
+				}
+				auto vel = se_ptr->getVelocityModifier();
+				if (ImGui::DragFloat("Velocity", &vel, 0.0001, 0.0f, 1.0f))
+				{
+					se_ptr->setVelocityModifier(vel);
+				}
+				auto emit_rate = se_ptr->getParticlesPerSec();
+				if (ImGui::DragFloat("Rate", &emit_rate, 2.0f, 0.0f, 10000.0f))
+				{
+					se_ptr->setParticlesPerSec(emit_rate);
+				}
+				if (ImGui::Button("Delete"))
+				{
+					sim.p_emitters.erase(sim.p_emitters.begin() + i);
+				}
 			}
 			ImGui::PopID();
 		}
 		if (ImGui::Button("Add particle emitter"))
 		{
-			sim.p_emitters.push_back(ParticleEmitter());
+			ParticleEmitter* new_pe = reinterpret_cast<ParticleEmitter*>(new StreamEmitter());
+			sim.p_emitters.push_back(std::unique_ptr<ParticleEmitter>(new_pe));
 		}
 	}
 
